@@ -1,11 +1,101 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid px-4 py-4 fade-in-up">
-    <!-- Header -->
-    <div class="mb-4 text-center">
-        <h2 class="fw-bold text-dark"><i class="fa-solid fa-user-gear me-2 text-primary"></i>My Profile</h2>
-        <p class="text-muted">Manage your account settings and personal information.</p>
+@push('styles')
+<style>
+    .inv-topbar {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        padding: 1.05rem 1.3rem;
+        background: linear-gradient(130deg, #0f766e 0%, #0ea5e9 55%, #2563eb 100%);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        box-shadow: 0 10px 26px rgba(14, 116, 144, 0.18);
+    }
+    .inv-topbar::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            radial-gradient(circle at 15% 20%, rgba(255,255,255,.20) 0, rgba(255,255,255,0) 32%),
+            radial-gradient(circle at 90% 0%, rgba(255,255,255,.14) 0, rgba(255,255,255,0) 34%);
+        pointer-events: none;
+    }
+    .inv-topbar-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
+        flex-wrap: wrap;
+    }
+    .inv-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+    }
+    .inv-title-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.18);
+        color: #fff;
+        font-size: 1rem;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+    }
+    .inv-title-text {
+        font-size: 1.85rem;
+        font-weight: 750;
+        letter-spacing: -0.35px;
+        color: #fff;
+        line-height: 1.05;
+        margin: 0;
+    }
+    .inv-header-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .inv-head-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.5rem 0.95rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.38);
+        background: rgba(255,255,255,.16);
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+</style>
+@endpush
+
+<div class="container-fluid px-4 staff-container animate-fade-up">
+    <div class="inv-topbar mb-4">
+        <div class="inv-topbar-inner">
+            <div class="inv-title-wrap">
+                <span class="inv-title-icon"><i class="fa-solid fa-user-gear"></i></span>
+                <h5 class="inv-title-text">My Profile</h5>
+            </div>
+            <div class="inv-header-actions">
+                <span class="inv-head-pill">
+                    @if($user->isAdmin())
+                        <i class="fa-solid fa-shield-halved"></i>Administrator
+                    @else
+                        <i class="fa-solid fa-id-card"></i>Staff Member
+                    @endif
+                </span>
+            </div>
+        </div>
     </div>
 
     <div class="row g-4">

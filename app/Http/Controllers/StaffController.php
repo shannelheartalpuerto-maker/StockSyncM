@@ -108,6 +108,9 @@ class StaffController extends Controller
         $todayStart = now()->startOfDay();
         $todayRevenue = Transaction::where('user_id', $userId)->where('created_at', '>=', $todayStart)->sum('total_amount');
         $todayTransactions = Transaction::where('user_id', $userId)->where('created_at', '>=', $todayStart)->count();
+        $itemsSoldToday = TransactionItem::whereHas('transaction', function ($query) use ($userId, $todayStart) {
+            $query->where('user_id', $userId)->where('created_at', '>=', $todayStart);
+        })->sum('quantity');
 
         $totalRevenue = Transaction::where('user_id', $userId)->sum('total_amount');
         $totalTransactions = Transaction::where('user_id', $userId)->count();
@@ -157,7 +160,16 @@ class StaffController extends Controller
             ->take(5)
             ->get();
 
+        // Low and Out of Stock Products for the 'Stock Alerts' tab
+        $lowStockProducts = Product::where('admin_id', $adminId)
+            ->where('quantity', '>', 0)
+            ->whereColumn('quantity', '<', 'low_stock_threshold')
+            ->orderBy('quantity', 'asc')
+            ->get();
 
+        $outOfStockProducts = Product::where('admin_id', $adminId)
+            ->where('quantity', '<=', 0)
+            ->get();
 
         // All Transactions (Paginated) for Sales Tab
         $transactions = $transactionQuery->latest()->paginate(10)->appends($request->query());
@@ -165,10 +177,11 @@ class StaffController extends Controller
         return view('staff.dashboard', compact(
             'lowStockCount', 'goodStockCount', 'overStockCount', 'outOfStockCount',
             'totalProducts', 'totalStock', 'totalCategories',
-            'todayRevenue', 'todayTransactions',
+            'todayRevenue', 'todayTransactions', 'itemsSoldToday',
             'totalRevenue', 'totalTransactions', 'averageSale', 'mostSoldProduct',
             'totalForecastQty', 'topMovingProduct',
-            'dates', 'revenues', 'recentTransactions', 'topSellingProducts', 'topSellersPeriod', 'transactions', 'stockLevels'
+            'dates', 'revenues', 'recentTransactions', 'topSellingProducts', 'topSellersPeriod', 'transactions', 'stockLevels',
+            'lowStockProducts', 'outOfStockProducts'
         ));
     }
 
@@ -296,11 +309,28 @@ class StaffController extends Controller
         $categories = \App\Models\Category::where('admin_id', $this->getAdminId())->orderBy('name')->get();
         $brands = \App\Models\Brand::where('admin_id', $this->getAdminId())->orderBy('name')->get();
 
+        // Stats for Inventory Dashboard
+        $adminId = $this->getAdminId();
+        $totalItems = Product::where('admin_id', $adminId)->count();
+        $lowStockCount = Product::where('admin_id', $adminId)
+            ->where('quantity', '>', 0)
+            ->whereColumn('quantity', '<', 'low_stock_threshold')
+            ->count();
+        $outOfStockCount = Product::where('admin_id', $adminId)->where('quantity', '<=', 0)->count();
+        $goodStockCount = Product::where('admin_id', $adminId)
+            ->where('quantity', '>', 0)
+            ->whereColumn('quantity', '>=', 'low_stock_threshold')
+            ->whereColumn('quantity', '<=', 'overstock_threshold')
+            ->count();
+
         if ($request->ajax()) {
             return view('staff.partials.inventory_table', compact('products'))->render();
         }
 
-        return view('staff.inventory', compact('products', 'categories', 'brands'));
+        return view('staff.inventory', compact(
+            'products', 'categories', 'brands', 
+            'totalItems', 'lowStockCount', 'outOfStockCount', 'goodStockCount'
+        ));
     }
 
     public function processSale(Request $request)
@@ -533,6 +563,9 @@ class StaffController extends Controller
         $totalReturned = (clone $returnedQuery)->sum('quantity');
         $totalStockOut = (clone $stockOutQuery)->sum('quantity');
         $totalDamaged = (clone $damagedStockQuery)->sum('quantity');
+        
+        // Total Activity Entries (Count of records)
+        $totalEntries = (clone $returnedQuery)->count() + (clone $stockOutQuery)->count() + (clone $damagedStockQuery)->count();
 
         // Get Paginated Results
         $returnedItems = $returnedQuery->latest()->paginate(10, ['*'], 'returned_page')->appends(['period' => $period, 'type' => 'returned']);
@@ -557,6 +590,7 @@ class StaffController extends Controller
                         'returned' => (int) $totalReturned,
                         'stock_out' => (int) $totalStockOut,
                         'damaged' => (int) $totalDamaged,
+                        'total_entries' => (int) $totalEntries,
                     ],
                     'tabs' => [
                         'returned_html' => $returnedHtml,
@@ -569,7 +603,7 @@ class StaffController extends Controller
 
         return view('staff.logs', compact(
             'returnedItems', 'stockOuts', 'damagedStocks', 'period',
-            'totalReturned', 'totalStockOut', 'totalDamaged'
+            'totalReturned', 'totalStockOut', 'totalDamaged', 'totalEntries'
         ));
     }
 }

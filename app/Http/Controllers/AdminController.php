@@ -696,4 +696,28 @@ class AdminController extends Controller
         }
         return redirect()->back()->with('success', 'Admin account deleted successfully.');
     }
+
+    public function restockReport()
+    {
+        $adminId = $this->getAdminId();
+        
+        // Fetch all products that are either out of stock or below low stock threshold
+        $restockProducts = Product::where('admin_id', $adminId)
+            ->with(['category', 'brand'])
+            ->where(function($q) {
+                $q->where('quantity', '<=', 0)
+                  ->orWhereColumn('quantity', '<', 'low_stock_threshold');
+            })
+            ->orderBy('quantity', 'asc')
+            ->get();
+
+        // Calculate the quantity to restock for each product
+        $restockProducts->each(function ($product) {
+            // Quantity to restock is the difference between the good stock threshold and current quantity
+            $qtyToRestock = max(0, $product->good_stock_threshold - $product->quantity);
+            $product->qty_to_restock = $qtyToRestock;
+        });
+
+        return view('admin.reports.restock_print', compact('restockProducts'));
+    }
 }

@@ -13,6 +13,32 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Deployment Utilities
+Route::get('/fix-storage', function () {
+    try {
+        $storagePath = storage_path('app/public');
+        $publicStoragePath = public_path('storage');
+        
+        if (file_exists($publicStoragePath)) {
+            if (is_link($publicStoragePath)) {
+                unlink($publicStoragePath);
+            } else {
+                // If it's a directory, rename it as backup
+                rename($publicStoragePath, $publicStoragePath . '_backup_' . time());
+            }
+        }
+        
+        // Create the symbolic link
+        if (symlink($storagePath, $publicStoragePath)) {
+            return "Storage link created successfully!";
+        } else {
+            return "Failed to create storage link using symlink().";
+        }
+    } catch (\Exception $e) {
+        return "Error: " . $e->getMessage();
+    }
+});
+
 Route::get('/', function () {
     return redirect()->route('login');
 });
@@ -55,6 +81,9 @@ Route::middleware(['auth', 'is_admin'])->prefix('admin')->name('admin.')->group(
     // Transaction Routes
     Route::get('/transactions', [App\Http\Controllers\TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{id}', [App\Http\Controllers\TransactionController::class, 'show'])->name('transactions.show');
+
+    // Report Routes
+    Route::get('/reports/restock-list', [App\Http\Controllers\AdminController::class, 'restockReport'])->name('reports.restock_list');
 });
 
 Route::middleware(['auth', 'is_staff'])->prefix('staff')->name('staff.')->group(function () {

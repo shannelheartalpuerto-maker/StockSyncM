@@ -1,22 +1,22 @@
 @foreach($brands as $brand)
 <tr>
-    <td class="ps-3 fw-bold text-dark">{{ $brand->name }}</td>
-    <td><span class="badge bg-secondary rounded-pill">{{ $brand->products->count() }} Products</span></td>
-    <td class="ps-3">
-        <div class="dropdown dropend">
-            <button class="btn btn-sm btn-light rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="viewport">
-                <i class="fa-solid fa-gear"></i>
+    <td class="ps-4">
+        <div class="fw-bold text-dark">{{ $brand->name }}</div>
+        <div class="text-muted small">ID: #B-{{ str_pad($brand->id, 3, '0', STR_PAD_LEFT) }}</div>
+    </td>
+    <td>
+        <span class="status-badge status-info">
+            <i class="fa-solid fa-copyright small me-1"></i>{{ $brand->products->count() }} Products
+        </span>
+    </td>
+    <td class="text-end pe-4">
+        <div class="btn-group shadow-sm rounded-3 overflow-hidden">
+            <button type="button" class="btn btn-white btn-sm border-end" data-bs-toggle="modal" data-bs-target="#ajax-editBrandModal{{ $brand->id }}" title="Edit">
+                <i class="fa-solid fa-pen-to-square text-primary"></i>
             </button>
-            <div class="dropdown-menu p-2" style="min-width: auto;">
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#ajax-editBrandModal{{ $brand->id }}">
-                        <i class="fa-solid fa-pen-to-square me-1"></i>Edit
-                    </button>
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#ajax-deleteBrandModal{{ $brand->id }}">
-                        <i class="fa-solid fa-trash me-1"></i>Delete
-                    </button>
-                </div>
-            </div>
+            <button type="button" class="btn btn-white btn-sm text-danger" data-bs-toggle="modal" data-bs-target="#ajax-deleteBrandModal{{ $brand->id }}" title="Delete">
+                <i class="fa-solid fa-trash"></i>
+            </button>
         </div>
     </td>
 </tr>

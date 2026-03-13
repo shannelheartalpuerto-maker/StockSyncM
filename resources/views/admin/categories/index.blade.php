@@ -1,65 +1,177 @@
 @extends('layouts.app')
 
 @section('content')
-<link href="{{ asset('css/admin-dashboard-design.css') }}?v={{ time() }}" rel="stylesheet">
-@push('styles')
+<link href="{{ asset('css/staff-design.css') }}?v={{ time() }}" rel="stylesheet">
 <style>
-    /* Force Z-Index Hierarchy to prevent black shading */
-    .modal-backdrop {
-        z-index: 10040 !important;
-    }
-    .modal {
-        z-index: 10050 !important;
-    }
+.inv-topbar {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    padding: 1.05rem 1.3rem;
+    background: linear-gradient(130deg, #0f766e 0%, #0ea5e9 55%, #2563eb 100%);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 0 10px 26px rgba(14, 116, 144, 0.18);
+}
+.inv-topbar::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(circle at 15% 20%, rgba(255,255,255,.20) 0, rgba(255,255,255,0) 32%),
+        radial-gradient(circle at 90% 0%, rgba(255,255,255,.14) 0, rgba(255,255,255,0) 34%);
+    pointer-events: none;
+}
+.inv-topbar-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.9rem;
+    flex-wrap: wrap;
+}
+.inv-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+.inv-title-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,.18);
+    color: #fff;
+    font-size: 1rem;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+}
+.inv-title-text {
+    font-size: 1.85rem;
+    font-weight: 750;
+    letter-spacing: -0.35px;
+    color: #fff;
+    line-height: 1.05;
+    margin: 0;
+}
+.inv-header-actions {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+.inv-head-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.95rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.38);
+    background: rgba(255,255,255,.16);
+    color: #fff;
+    font-size: 0.9rem;
+    font-weight: 650;
+    white-space: nowrap;
+}
+.inv-table thead th {
+    background: #f8faff;
+    font-size: 0.71rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .6px;
+    color: #6b7280;
+    border-bottom: 2px solid #e5e7eb;
+    padding: 0.85rem 1rem;
+    white-space: nowrap;
+}
+.inv-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+}
+.inv-table tbody tr:last-child td { border-bottom: none; }
+.inv-table tbody tr:hover { background: #fafbff; }
+.class-form-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 1.2rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,.04);
+}
+.class-form-card h6 {
+    font-size: 0.95rem;
+}
+.classify-tabs-wrap {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 0.4rem;
+    display: inline-flex;
+}
+.class-list-shell {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.04);
+    overflow: hidden;
+}
 </style>
-@endpush
-<div class="container-fluid px-4 admin-dashboard-container animate-fade-up">
-    <!-- Header -->
-    <div class="dashboard-header">
-        <h2 class="dashboard-title"><i class="fa-solid fa-tags me-3 text-primary"></i>Classifications Management</h2>
-        <p class="dashboard-subtitle">Organize your products into categories and brands.</p>
+
+<div class="staff-container animate-fade-up">
+    <div class="inv-topbar mb-4">
+        <div class="inv-topbar-inner">
+            <div class="inv-title-wrap">
+                <span class="inv-title-icon"><i class="fa-solid fa-layer-group"></i></span>
+                <h5 class="inv-title-text">Manage Classifications</h5>
+            </div>
+            <div class="inv-header-actions">
+                <span class="inv-head-pill"><i class="fa-solid fa-tags"></i>{{ method_exists($categories, 'total') ? number_format($categories->total()) : number_format($categories->count()) }} Categories</span>
+                <span class="inv-head-pill"><i class="fa-solid fa-copyright"></i>{{ method_exists($brands, 'total') ? number_format($brands->total()) : number_format($brands->count()) }} Brands</span>
+            </div>
+        </div>
     </div>
 
-    <div class="content-card mb-4">
-        <div class="card-header-custom">
-            <h5 class="card-title-custom mb-0"><i class="fa-solid fa-layer-group me-2"></i>Manage Classifications</h5>
-        </div>
-
+    <div class="content-card">
         <div class="card-body-custom">
             @if (session('success'))
-                <div class="alert alert-success" role="alert">
-                    {{ session('success') }}
+                <div class="alert alert-success border-0 shadow-sm mb-4" role="alert">
+                    <i class="fa-solid fa-circle-check me-2"></i>{{ session('success') }}
                 </div>
             @endif
 
-            <ul class="nav nav-tabs mb-4" id="classificationTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="categories" aria-selected="true">
-                        <i class="fa-solid fa-folder me-2"></i>Categories
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="brands-tab" data-bs-toggle="tab" data-bs-target="#brands" type="button" role="tab" aria-controls="brands" aria-selected="false">
-                        <i class="fa-solid fa-copyright me-2"></i>Brands
-                    </button>
-                </li>
-            </ul>
+            <div class="d-flex justify-content-center mb-4">
+                <ul class="nav nav-pills dashboard-tabs classify-tabs-wrap" id="classificationTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active rounded-pill px-4 py-2" id="categories-tab" data-bs-toggle="tab" data-bs-target="#categories" type="button" role="tab" aria-controls="categories" aria-selected="true">
+                            <i class="fa-solid fa-tags me-2"></i>Categories
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link rounded-pill px-4 py-2" id="brands-tab" data-bs-toggle="tab" data-bs-target="#brands" type="button" role="tab" aria-controls="brands" aria-selected="false">
+                            <i class="fa-solid fa-copyright me-2"></i>Brands
+                        </button>
+                    </li>
+                </ul>
+            </div>
 
             <div class="tab-content" id="classificationTabsContent">
                 <!-- Categories Tab -->
                 <div class="tab-pane fade show active" id="categories" role="tabpanel" aria-labelledby="categories-tab">
-                    <div class="row g-4">
+                    <div class="row g-4 align-items-stretch">
                         <!-- Add Category Section -->
                         <div class="col-md-4">
-                            <div class="p-3 bg-light rounded-3 h-100 border">
-                                <h5 class="mb-3 fw-bold text-dark"><i class="fa-solid fa-folder-plus me-2 text-success"></i>Add New Category</h5>
-                                <form method="POST" action="{{ route('admin.categories.store') }}">
+                            <div class="class-form-card h-100">
+                                <h6 class="fw-bold mb-3 text-indigo"><i class="fa-solid fa-folder-plus me-2"></i>Add New Category</h6>
+                                <form method="POST" action="{{ route('admin.categories.store') }}" id="categoriesForm">
                                     @csrf
                                     <div class="mb-3">
-                                        <label for="name" class="form-label fw-bold small text-muted text-uppercase">Category Name</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white text-muted"><i class="fa-solid fa-tag"></i></span>
-                                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required placeholder="Enter category name">
+                                        <label for="name" class="form-label fw-semibold small text-muted text-uppercase">Category Name</label>
+                                        <div class="input-group search-input-group border">
+                                            <span class="input-group-text bg-transparent border-0"><i class="fa-solid fa-tag text-muted"></i></span>
+                                            <input type="text" class="form-control border-0 bg-transparent @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required placeholder="e.g. School Supplies">
                                         </div>
                                         @error('name')
                                             <span class="invalid-feedback d-block" role="alert">
@@ -67,7 +179,7 @@
                                             </span>
                                         @enderror
                                     </div>
-                                    <button type="submit" class="btn btn-primary w-100">
+                                    <button type="submit" class="btn btn-indigo w-100">
                                         <i class="fa-solid fa-plus me-2"></i>Create Category
                                     </button>
                                 </form>
@@ -76,14 +188,14 @@
 
                         <!-- Category List Section -->
                         <div class="col-md-8">
-                            <h5 class="mb-3 fw-bold text-dark"><i class="fa-solid fa-list me-2 text-primary"></i>Category List</h5>
+                            <div class="class-list-shell">
                             <div class="table-responsive" id="categoriesTableWrap">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="bg-light">
+                                <table class="table align-middle inv-table">
+                                    <thead>
                                         <tr>
-                                            <th class="ps-3">Name</th>
-                                            <th>Products Count</th>
-                                            <th class="ps-3">Actions</th>
+                                            <th class="ps-4">Category Name</th>
+                                            <th>Product Count</th>
+                                            <th class="text-end pe-4">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="categoriesTableBody">
@@ -91,14 +203,17 @@
 
                                         @if($categories->isEmpty())
                                         <tr>
-                                            <td colspan="3" class="text-center py-5 text-muted">
-                                                <i class="fa-solid fa-folder-open fa-2x mb-3 opacity-50"></i>
-                                                <p class="mb-0">No categories found.</p>
+                                            <td colspan="3" class="text-center py-5">
+                                                <div class="py-3">
+                                                    <i class="fa-solid fa-folder-open fa-3x mb-3 text-muted opacity-25"></i>
+                                                    <p class="text-muted">No categories found.</p>
+                                                </div>
                                             </td>
                                         </tr>
                                         @endif
                                     </tbody>
                                 </table>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -106,18 +221,18 @@
 
                 <!-- Brands Tab -->
                 <div class="tab-pane fade" id="brands" role="tabpanel" aria-labelledby="brands-tab">
-                    <div class="row g-4">
+                    <div class="row g-4 align-items-stretch">
                         <!-- Add Brand Section -->
                         <div class="col-md-4">
-                            <div class="p-3 bg-light rounded-3 h-100 border">
-                                <h5 class="mb-3 fw-bold text-dark"><i class="fa-solid fa-plus-circle me-2 text-success"></i>Add New Brand</h5>
-                                <form method="POST" action="{{ route('admin.brands.store') }}">
+                            <div class="class-form-card h-100">
+                                <h6 class="fw-bold mb-3 text-teal"><i class="fa-solid fa-plus-circle me-2"></i>Add New Brand</h6>
+                                <form method="POST" action="{{ route('admin.brands.store') }}" id="brandsForm">
                                     @csrf
                                     <div class="mb-3">
-                                        <label for="brand_name" class="form-label fw-bold small text-muted text-uppercase">Brand Name</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-white text-muted"><i class="fa-solid fa-copyright"></i></span>
-                                            <input type="text" class="form-control @error('name') is-invalid @enderror" id="brand_name" name="name" required placeholder="Enter brand name">
+                                        <label for="brand_name" class="form-label fw-semibold small text-muted text-uppercase">Brand Name</label>
+                                        <div class="input-group search-input-group border">
+                                            <span class="input-group-text bg-transparent border-0"><i class="fa-solid fa-copyright text-muted"></i></span>
+                                            <input type="text" class="form-control border-0 bg-transparent @error('name') is-invalid @enderror" id="brand_name" name="name" required placeholder="e.g. Pilot">
                                         </div>
                                         @error('name')
                                             <span class="invalid-feedback d-block" role="alert">
@@ -125,7 +240,7 @@
                                             </span>
                                         @enderror
                                     </div>
-                                    <button type="submit" class="btn btn-primary w-100">
+                                    <button type="submit" class="btn btn-teal w-100">
                                         <i class="fa-solid fa-plus me-2"></i>Create Brand
                                     </button>
                                 </form>
@@ -134,14 +249,14 @@
 
                         <!-- Brand List Section -->
                         <div class="col-md-8">
-                            <h5 class="mb-3 fw-bold text-dark"><i class="fa-solid fa-list me-2 text-primary"></i>Brand List</h5>
+                            <div class="class-list-shell">
                             <div class="table-responsive" id="brandsTableWrap">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="bg-light">
+                                <table class="table align-middle inv-table">
+                                    <thead>
                                         <tr>
-                                            <th class="ps-3">Name</th>
-                                            <th>Products Count</th>
-                                            <th class="ps-3">Actions</th>
+                                            <th class="ps-4">Brand Name</th>
+                                            <th>Product Count</th>
+                                            <th class="text-end pe-4">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody id="brandsTableBody">
@@ -149,14 +264,17 @@
 
                                         @if($brands->isEmpty())
                                         <tr>
-                                            <td colspan="3" class="text-center py-5 text-muted">
-                                                <i class="fa-solid fa-copyright fa-2x mb-3 opacity-50"></i>
-                                                <p class="mb-0">No brands found.</p>
+                                            <td colspan="3" class="text-center py-5">
+                                                <div class="py-3">
+                                                    <i class="fa-solid fa-copyright fa-3x mb-3 text-muted opacity-25"></i>
+                                                    <p class="text-muted">No brands found.</p>
+                                                </div>
                                             </td>
                                         </tr>
                                         @endif
                                     </tbody>
                                 </table>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -174,32 +292,36 @@
 <!-- Categories Modals -->
 @foreach($categories as $category)
     <!-- Edit Modal -->
-    <div class="modal fade" id="editCategoryModal{{ $category->id }}" tabindex="-1" aria-labelledby="editCategoryModalLabel{{ $category->id }}" aria-hidden="true">
+    <div class="modal fade" id="ajax-editCategoryModal{{ $category->id }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg">
                 <form action="{{ route('admin.categories.update', $category->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title fw-bold" id="editCategoryModalLabel{{ $category->id }}">
-                            <i class="fa-solid fa-pen-to-square me-2"></i>Edit Category
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-header border-0 pb-0">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="fa-solid fa-pen-to-square text-primary fs-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title fw-bold">Edit Category</h5>
+                                <p class="text-muted small mb-0">{{ $category->name }}</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-4">
-                        <div class="mb-3">
+                        <div class="mb-0">
                             <label for="name{{ $category->id }}" class="form-label fw-bold">Category Name</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fa-solid fa-tag text-muted"></i></span>
-                                <input type="text" class="form-control" id="name{{ $category->id }}" name="name" value="{{ $category->name }}" required placeholder="Enter category name">
+                            <div class="input-group search-input-group border">
+                                <span class="input-group-text bg-transparent border-0"><i class="fa-solid fa-tag text-muted"></i></span>
+                                <input type="text" class="form-control border-0 bg-transparent" id="name{{ $category->id }}" name="name" value="{{ $category->name }}" required placeholder="Enter category name">
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer bg-light border-top-0">
-                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary px-4 fw-bold">
-                            <i class="fa-solid fa-save me-2"></i>Save Changes
-                        </button>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -207,32 +329,25 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteCategoryModal{{ $category->id }}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="ajax-deleteCategoryModal{{ $category->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-trash-can me-2"></i>Delete Category</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <div class="modal-body p-4 text-center">
-                    <div class="mb-3 text-danger">
-                        <i class="fa-solid fa-triangle-exclamation fa-4x opacity-75"></i>
+                    <div class="mb-3">
+                        <div class="bg-danger bg-opacity-10 d-inline-flex p-3 rounded-circle mb-3">
+                            <i class="fa-solid fa-trash-can text-danger fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Delete Category?</h5>
+                        <p class="text-muted small mb-2">Delete <strong>{{ $category->name }}</strong>? Products in this category will be affected.</p>
                     </div>
-                    <h5 class="fw-bold mb-2">Are you sure?</h5>
-                    <p class="text-muted mb-0">
-                        Do you really want to delete <strong>{{ $category->name }}</strong>?<br>
-                        <span class="text-danger fw-bold small">Warning: All products in this category will be affected.</span>
-                    </p>
-                </div>
-                <div class="modal-footer bg-light border-top-0 justify-content-center">
-                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger px-4 fw-bold">
-                            <i class="fa-solid fa-trash me-2"></i>Delete
-                        </button>
-                    </form>
+                    <div class="d-flex gap-2 justify-content-center mt-4">
+                        <button type="button" class="btn btn-light px-4 flex-grow-1" data-bs-dismiss="modal">Cancel</button>
+                        <form action="{{ route('admin.categories.destroy', $category->id) }}" method="POST" class="flex-grow-1">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger w-100 px-4">Delete</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -242,32 +357,36 @@
 <!-- Brands Modals -->
 @foreach($brands as $brand)
     <!-- Edit Modal -->
-    <div class="modal fade" id="editBrandModal{{ $brand->id }}" tabindex="-1" aria-labelledby="editBrandModalLabel{{ $brand->id }}" aria-hidden="true">
+    <div class="modal fade" id="ajax-editBrandModal{{ $brand->id }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg">
                 <form action="{{ route('admin.brands.update', $brand->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title fw-bold" id="editBrandModalLabel{{ $brand->id }}">
-                            <i class="fa-solid fa-pen-to-square me-2"></i>Edit Brand
-                        </h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <div class="modal-header border-0 pb-0">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-3 me-3">
+                                <i class="fa-solid fa-pen-to-square text-primary fs-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="modal-title fw-bold">Edit Brand</h5>
+                                <p class="text-muted small mb-0">{{ $brand->name }}</p>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body p-4">
-                        <div class="mb-3">
+                        <div class="mb-0">
                             <label for="brand_name{{ $brand->id }}" class="form-label fw-bold">Brand Name</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white"><i class="fa-solid fa-copyright text-muted"></i></span>
-                                <input type="text" class="form-control" id="brand_name{{ $brand->id }}" name="name" value="{{ $brand->name }}" required placeholder="Enter brand name">
+                            <div class="input-group search-input-group border">
+                                <span class="input-group-text bg-transparent border-0"><i class="fa-solid fa-copyright text-muted"></i></span>
+                                <input type="text" class="form-control border-0 bg-transparent" id="brand_name{{ $brand->id }}" name="name" value="{{ $brand->name }}" required placeholder="Enter brand name">
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer bg-light border-top-0">
-                        <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary px-4 fw-bold">
-                            <i class="fa-solid fa-save me-2"></i>Save Changes
-                        </button>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
                     </div>
                 </form>
             </div>
@@ -275,32 +394,25 @@
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteBrandModal{{ $brand->id }}" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="ajax-deleteBrandModal{{ $brand->id }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-dark text-white">
-                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-trash-can me-2"></i>Delete Brand</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
                 <div class="modal-body p-4 text-center">
-                    <div class="mb-3 text-danger">
-                        <i class="fa-solid fa-triangle-exclamation fa-4x opacity-75"></i>
+                    <div class="mb-3">
+                        <div class="bg-danger bg-opacity-10 d-inline-flex p-3 rounded-circle mb-3">
+                            <i class="fa-solid fa-trash-can text-danger fs-2"></i>
+                        </div>
+                        <h5 class="fw-bold mb-2">Delete Brand?</h5>
+                        <p class="text-muted small mb-2">Delete <strong>{{ $brand->name }}</strong>? Products linked to this brand will be unlinked.</p>
                     </div>
-                    <h5 class="fw-bold mb-2">Are you sure?</h5>
-                    <p class="text-muted mb-0">
-                        Do you really want to delete <strong>{{ $brand->name }}</strong>?<br>
-                        <span class="text-danger fw-bold small">Warning: Products linked to this brand will be unlinked.</span>
-                    </p>
-                </div>
-                <div class="modal-footer bg-light border-top-0 justify-content-center">
-                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                    <form action="{{ route('admin.brands.destroy', $brand->id) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger px-4 fw-bold">
-                            <i class="fa-solid fa-trash me-2"></i>Delete
-                        </button>
-                    </form>
+                    <div class="d-flex gap-2 justify-content-center mt-4">
+                        <button type="button" class="btn btn-light px-4 flex-grow-1" data-bs-dismiss="modal">Cancel</button>
+                        <form action="{{ route('admin.brands.destroy', $brand->id) }}" method="POST" class="flex-grow-1">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger w-100 px-4">Delete</button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

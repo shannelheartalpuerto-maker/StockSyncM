@@ -1,8 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<link href="{{ asset('css/admin-dashboard-design.css') }}?v={{ time() }}" rel="stylesheet">
-<div class="container-fluid px-4 admin-dashboard-container animate-fade-up">
+<div class="staff-container animate-fade-up">
     <!-- Notifications -->
     <div class="position-fixed top-0 end-0 p-3" style="z-index: 1100">
         <div id="liveToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
@@ -15,147 +14,82 @@
         </div>
     </div>
 
-    <!-- Mobile Cart Summary (Visible only on mobile) -->
-    <div class="fixed-bottom bg-white border-top shadow p-3 d-lg-none">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <span class="small text-muted d-block">Total</span>
-                <span class="fs-4 fw-bold text-primary" id="mobileTotalAmount">₱0.00</span>
+    <div class="inv-topbar mb-4">
+        <div class="inv-topbar-inner">
+            <div class="inv-title-wrap">
+                <span class="inv-title-icon"><i class="fa-solid fa-cash-register"></i></span>
+                <h5 class="inv-title-text">POS Terminal</h5>
             </div>
-            <button class="btn btn-primary fw-bold px-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" aria-controls="cartOffcanvas">
-                <i class="fa-solid fa-cart-shopping me-2"></i> View Cart <span class="badge bg-white text-primary ms-1" id="mobileCartCount">0</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- Cart Offcanvas for Mobile -->
-    <div class="offcanvas offcanvas-bottom h-75" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel">
-        <div class="offcanvas-header bg-light border-bottom">
-            <h5 class="offcanvas-title fw-bold" id="cartOffcanvasLabel"><i class="fa-solid fa-cart-shopping me-2"></i>Current Sale</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body p-0 d-flex flex-column">
-            <div class="table-responsive flex-grow-1 p-3">
-                <table class="table table-striped align-middle mb-0">
-                    <thead class="bg-white sticky-top">
-                        <tr>
-                            <th>Item</th>
-                            <th class="text-center">Qty</th>
-                            <th class="text-end">Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="mobileCartTableBody">
-                        <!-- Mobile Cart Items -->
-                    </tbody>
-                </table>
-                 <div id="mobileEmptyCartMessage" class="text-center py-5 text-muted" style="display: none;">
-                    <i class="fa-solid fa-cart-arrow-down fs-1 mb-2 opacity-25"></i>
-                    <p>Cart is empty</p>
-                </div>
-            </div>
-            <div class="p-3 bg-light border-top mt-auto">
-                 <div class="d-flex justify-content-between mb-2">
-                    <span class="fs-5">Total:</span>
-                    <span class="fs-4 fw-bold text-primary" id="mobileOffcanvasTotal">₱0.00</span>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-bold text-uppercase text-muted">Payment Received</label>
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-text bg-white">₱</span>
-                        <input type="number" id="mobilePaymentReceived" class="form-control" step="0.01" placeholder="0.00">
-                    </div>
-                </div>
-                 <div class="d-flex justify-content-between mb-3 align-items-center">
-                    <span class="small fw-bold text-muted">CHANGE:</span>
-                    <span class="fs-5 fw-bold" id="mobileChangeAmount">₱0.00</span>
-                </div>
-                <button class="btn btn-success w-100 btn-lg fw-bold py-3 shadow-sm" onclick="processSale(true)">
-                    <i class="fa-solid fa-check-circle me-2"></i>COMPLETE SALE
-                </button>
+            <div class="inv-header-actions">
+                <span class="inv-head-pill"><i class="fa-solid fa-box"></i>{{ number_format($products->count()) }} Products</span>
+                <span class="inv-head-pill"><i class="fa-solid fa-tags"></i>{{ isset($categories) ? number_format($categories->count()) : '0' }} Categories</span>
             </div>
         </div>
     </div>
 
-    <!-- Header -->
-    <div class="dashboard-header text-center mb-4">
-        <h2 class="dashboard-title"><i class="fa-solid fa-cash-register me-3"></i>Point of Sale</h2>
-        <p class="dashboard-subtitle">Process sales and manage transactions efficiently.</p>
-    </div>
-
-    <div class="row g-4 mb-5 pb-5 mb-lg-0 pb-lg-0">
+    <div class="row g-4">
         <!-- Product List -->
-        <div class="col-lg-8 mb-4">
-            <div class="content-card h-100 shadow-sm">
-                <div class="card-header-custom py-3">
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-                        <h5 class="mb-0 fw-bold"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Products</h5>
-                        <div class="d-flex flex-column flex-md-row gap-2 flex-grow-1 justify-content-end">
-                            <select id="categoryFilter" class="form-select w-100 w-md-auto">
-                                <option value="">All Categories</option>
-                                @isset($categories)
-                                    @foreach($categories as $cat)
-                                        <option value="{{ $cat->id }}">{{ $cat->name }}</option>
-                                    @endforeach
-                                @endisset
-                            </select>
-                            <select id="brandFilter" class="form-select w-100 w-md-auto">
-                                <option value="">All Brands</option>
-                                @isset($brands)
-                                    @foreach($brands as $brand)
-                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                                    @endforeach
-                                @endisset
-                            </select>
-                            <input type="text" id="searchProduct" class="form-control w-100 w-md-auto" placeholder="Search..." autofocus>
+        <div class="col-lg-8">
+            <div class="content-card d-flex flex-column" style="height: calc(100vh - 160px); min-height: 600px;">
+                <div class="card-header-custom d-flex justify-content-between align-items-center flex-wrap gap-3 py-3 flex-shrink-0">
+                    <h5 class="card-title-custom mb-0"><i class="fa-solid fa-boxes-stacked me-2 text-primary"></i>Product Catalog</h5>
+                    <div class="d-flex gap-2 flex-wrap flex-grow-1 justify-content-end">
+                        <select id="categoryFilter" class="form-select border-0 bg-light shadow-none" style="width: 160px;">
+                            <option value="">All Categories</option>
+                            @isset($categories)
+                                @foreach($categories as $cat)
+                                    <option value="{{ $cat->id }}">{{ $cat->name }}</option>
+                                @endforeach
+                            @endisset
+                        </select>
+                        <select id="brandFilter" class="form-select border-0 bg-light shadow-none" style="width: 160px;">
+                            <option value="">All Brands</option>
+                            @isset($brands)
+                                @foreach($brands as $brand)
+                                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                @endforeach
+                            @endisset
+                        </select>
+                        <div class="input-group shadow-none" style="width: 220px;">
+                            <span class="input-group-text bg-light border-0"><i class="fa-solid fa-magnifying-glass text-muted"></i></span>
+                            <input type="text" id="searchProduct" class="form-control border-0 bg-light shadow-none" placeholder="Search product..." autofocus>
                         </div>
                     </div>
                 </div>
-                <div class="card-body-custom p-3" style="height: 75vh; overflow-y: auto;">
+                <div class="card-body-custom flex-grow-1 overflow-auto p-4 pt-2">
                     <div class="row g-3" id="productsContainer">
                         @foreach($products as $product)
                             @php
                                 $statusColor = 'success';
-                                $statusText = 'Good Stock';
+                                $statusText = 'In Stock';
                                 if ($product->quantity <= 0) {
                                     $statusColor = 'danger';
                                     $statusText = 'Out of Stock';
                                 } elseif ($product->quantity < $product->low_stock_threshold) {
-                                    $statusColor = 'danger';
+                                    $statusColor = 'warning';
                                     $statusText = 'Low Stock';
-                                } elseif ($product->quantity > $product->overstock_threshold) {
-                                    $statusColor = 'warning text-dark';
-                                    $statusText = 'Overstock';
                                 }
                             @endphp
-                        <div class="col-6 col-md-4 col-lg-3 product-item" data-name="{{ strtolower($product->name) }}" data-code="{{ $product->code }}" data-category-id="{{ $product->category_id }}" data-category-name="{{ $product->category ? strtolower($product->category->name) : '' }}" data-brand-id="{{ $product->brand_id }}" data-brand-name="{{ $product->brand ? strtolower($product->brand->name) : '' }}">
-                                <div class="card h-100 product-card border-0 shadow-sm {{ $product->quantity == 0 ? 'opacity-50' : 'cursor-pointer' }}" 
+                        <div class="col-md-4 col-xl-3 product-item" 
+                             data-id="{{ $product->id }}"
+                             data-name="{{ strtolower($product->name) }}" 
+                             data-code="{{ $product->code }}" 
+                             data-category-id="{{ $product->category_id }}" 
+                             data-brand-id="{{ $product->brand_id }}"
+                             data-stock="{{ $product->quantity }}">
+                            <div id="product-card-{{ $product->id }}" class="pos-product-card {{ $product->quantity == 0 ? 'out-of-stock' : '' }}" 
                                  onclick="{{ $product->quantity > 0 ? 'addToCart('.$product->id.', \''.addslashes($product->name).'\', '.$product->price.', '.$product->quantity.')' : 'showError(\'Out of stock!\')' }}">
-                                <div class="card-body text-center p-3 d-flex flex-column">
-                                    <div class="mb-2 d-flex justify-content-center align-items-center" style="height: 60px;">
-                                        @if($product->image)
-                                            <img src="{{ asset('storage/' . $product->image) }}" 
-                                             alt="{{ $product->name }}" 
-                                             class="img-fluid rounded" 
-                                             style="max-height: 60px; max-width: 100%;"
-                                             onerror="this.parentNode.innerHTML='<div class=\'avatar avatar-md bg-light text-primary rounded-circle mx-auto d-flex align-items-center justify-content-center\' style=\'width: 48px; height: 48px;\'><span class=\'fw-bold\'>{{ substr($product->name, 0, 1) }}</span></div>'">
-                                        @else
-                                            <div class="avatar avatar-md bg-light text-primary rounded-circle mx-auto d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                                                <span class="fw-bold">{{ substr($product->name, 0, 1) }}</span>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    <h6 class="card-title fw-bold text-truncate mb-1" title="{{ $product->name }}">{{ $product->name }}</h6>
-                                    <small class="text-muted d-block mb-2">{{ $product->code }}</small>
-                                    
-                                    <div class="mt-auto">
-                                        <h5 class="text-primary fw-bold mb-2">₱{{ number_format($product->price, 2) }}</h5>
-                                        <div class="d-flex justify-content-center gap-1">
-                                            <span class="badge bg-{{ $statusColor }} bg-opacity-10 text-{{ $statusColor }} border border-{{ $statusColor }}">
-                                                {{ $statusText }}
-                                            </span>
-                                            <span class="badge bg-dark">{{ $product->quantity }}</span>
-                                        </div>
-                                    </div>
+                                <div class="pos-product-img">
+                                    @if($product->image)
+                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
+                                    @else
+                                        <div class="no-img"><i class="fa-solid fa-box opacity-25"></i></div>
+                                    @endif
+                                    <div class="stock-pill" id="stock-display-{{ $product->id }}">{{ $product->quantity }}</div>
+                                </div>
+                                <div class="pos-product-info">
+                                    <h6 class="name text-truncate" title="{{ $product->name }}">{{ $product->name }}</h6>
+                                    <div class="price">₱{{ number_format($product->price, 2) }}</div>
                                 </div>
                             </div>
                         </div>
@@ -165,53 +99,50 @@
             </div>
         </div>
 
-        <!-- Cart/Checkout -->
+        <!-- Cart Section -->
         <div class="col-lg-4">
-            <div class="content-card h-100 shadow-sm">
-                <div class="card-header-custom py-3">
-                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-cart-shopping me-2"></i>Current Sale</h5>
+            <div class="content-card d-flex flex-column" style="height: calc(100vh - 160px); min-height: 600px;">
+                <div class="card-header-custom py-3 border-bottom-0 flex-shrink-0">
+                    <h5 class="card-title-custom mb-0"><i class="fa-solid fa-shopping-cart me-2 text-primary"></i>Current Order</h5>
                 </div>
-                <div class="card-body-custom d-flex flex-column p-0">
-                    <div class="table-responsive flex-grow-1" style="max-height: 45vh; overflow-y: auto;">
-                        <table class="table table-hover align-middle mb-0">
-                            <thead class="bg-light sticky-top">
-                                <tr>
-                                    <th class="ps-3 small">Item</th>
-                                    <th class="text-center small" style="width: 90px;">Qty</th>
-                                    <th class="text-end pe-3 small">Total</th>
-                                    <th style="width: 30px;"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="cartTableBody">
-                                <!-- Cart Items go here -->
-                            </tbody>
-                        </table>
-                        <div id="emptyCartMessage" class="text-center py-5 text-muted">
-                            <i class="fa-solid fa-cart-arrow-down fs-1 mb-2 opacity-25"></i>
-                            <p>Cart is empty</p>
-                        </div>
+                
+                <div class="cart-items-wrapper flex-grow-1 overflow-auto px-3" style="min-height: 150px;">
+                    <div id="cartTableBody" class="cart-list">
+                        <!-- Cart items will be rendered here -->
+                    </div>
+                    <div id="emptyCartMessage" class="text-center py-5 text-muted opacity-50">
+                        <i class="fa-solid fa-cart-shopping fa-3x mb-3"></i>
+                        <p class="fw-bold">No items added yet</p>
+                    </div>
+                </div>
+
+                <div class="cart-footer p-3 bg-white border-top shadow-sm flex-shrink-0">
+                    <div class="summary-row mb-1">
+                        <span class="label small">Subtotal</span>
+                        <span class="value small" id="subtotalAmount">₱0.00</span>
+                    </div>
+                    <div class="summary-row mb-3">
+                        <span class="label fw-bold text-dark">Total</span>
+                        <span class="value fs-4 fw-bold text-primary" id="totalAmount">₱0.00</span>
                     </div>
                     
-                    <div class="p-3 bg-light border-top mt-auto">
-                        <div class="d-flex justify-content-between mb-2">
-                            <span class="fw-bold">Total:</span>
-                            <span class="fs-5 fw-bold text-primary" id="totalAmount">₱0.00</span>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label small fw-bold text-uppercase text-muted mb-1" style="font-size: 0.7rem;">Payment Received</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-white">₱</span>
-                                <input type="number" id="paymentReceived" class="form-control" step="0.01" placeholder="0.00">
+                    <div class="payment-box mb-3 p-2 bg-light rounded-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <label class="small fw-bold text-muted text-uppercase mb-0 flex-grow-1" style="font-size: 0.7rem;">Cash Received</label>
+                            <div class="input-group input-group-sm" style="width: 130px;">
+                                <span class="input-group-text bg-white border-end-0 pe-1">₱</span>
+                                <input type="number" id="paymentReceived" class="form-control border-start-0 ps-1 fw-bold text-end shadow-none" step="0.01" placeholder="0.00">
                             </div>
                         </div>
-                        <div class="d-flex justify-content-between mb-3 align-items-center">
-                            <span class="small fw-bold text-muted">CHANGE:</span>
-                            <span class="fs-6 fw-bold" id="changeAmount">₱0.00</span>
+                        <div class="d-flex align-items-center">
+                            <span class="small fw-bold text-muted text-uppercase flex-grow-1" style="font-size: 0.7rem;">Change</span>
+                            <span class="fw-bold text-dark h6 mb-0" id="changeAmount">₱0.00</span>
                         </div>
-                        <button class="btn btn-success w-100 fw-bold py-2 shadow-sm" onclick="processSale()">
-                            <i class="fa-solid fa-check-circle me-2"></i>COMPLETE SALE
-                        </button>
                     </div>
+
+                    <button class="btn btn-primary w-100 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" onclick="processSale()">
+                        <i class="fa-solid fa-check-circle"></i> COMPLETE SALE
+                    </button>
                 </div>
             </div>
         </div>
@@ -219,45 +150,320 @@
 </div>
 
 <!-- Success Modal -->
-<div class="modal fade" id="saleSuccessModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="saleSuccessModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content text-center p-4 border-0 shadow-lg">
-      <div class="mb-3">
-        <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-            <i class="fa-solid fa-check fa-3x text-success"></i>
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+      <div class="modal-body p-5 text-center bg-white position-relative">
+        <div class="mb-4">
+            <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center" style="width: 90px; height: 90px;">
+                <i class="fa-solid fa-circle-check fa-4x text-success animate-pop"></i>
+            </div>
         </div>
-      </div>
-      <h3 class="fw-bold text-success mb-2">Sale Completed!</h3>
-      <p class="text-muted mb-4">The transaction has been recorded successfully.</p>
-      
-      <div class="bg-light p-3 rounded-3 mb-4 text-start">
-        <div class="d-flex justify-content-between mb-1">
-            <span class="text-muted">Transaction ID:</span>
-            <span class="fw-bold" id="successTrxId">#TRX-0000</span>
+        <h3 class="fw-bold text-dark mb-1">Order Confirmed!</h3>
+        <p class="text-secondary small mb-4">Transaction #<span id="successTrxId">0000</span></p>
+        
+        <div class="row g-3 mb-4">
+            <div class="col-6">
+                <div class="p-3 bg-light rounded-3 text-center border">
+                    <div class="small text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.65rem;">Paid</div>
+                    <div class="h5 fw-bold text-dark mb-0" id="successTotal">₱0.00</div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="p-3 bg-light rounded-3 text-center border border-success border-opacity-25">
+                    <div class="small text-muted mb-1 text-uppercase fw-bold" style="font-size: 0.65rem;">Change</div>
+                    <div class="h5 fw-bold text-success mb-0" id="successChange">₱0.00</div>
+                </div>
+            </div>
         </div>
-        <div class="d-flex justify-content-between mb-1">
-            <span class="text-muted">Total Amount:</span>
-            <span class="fw-bold" id="successTotal">₱0.00</span>
-        </div>
-        <div class="d-flex justify-content-between">
-            <span class="text-muted">Change:</span>
-            <span class="fw-bold text-success" id="successChange">₱0.00</span>
-        </div>
-      </div>
 
-      <div class="d-grid gap-2">
-        <button type="button" class="btn btn-primary btn-lg fw-bold" onclick="location.reload()">
-            <i class="fa-solid fa-plus me-2"></i>Start New Sale
-        </button>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-outline-secondary btn-lg flex-grow-1 rounded-3 py-2 small fw-bold" onclick="window.print()">
+                <i class="fa-solid fa-print me-1"></i> Print Receipt
+            </button>
+            <button type="button" class="btn btn-primary btn-lg flex-grow-1 rounded-3 py-2 small fw-bold" onclick="location.reload()">
+                <i class="fa-solid fa-plus me-1"></i> New Order
+            </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+<style>
+    .inv-topbar {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        padding: 1.05rem 1.3rem;
+        background: linear-gradient(130deg, #0f766e 0%, #0ea5e9 55%, #2563eb 100%);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        box-shadow: 0 10px 26px rgba(14, 116, 144, 0.18);
+    }
+    .inv-topbar::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            radial-gradient(circle at 15% 20%, rgba(255,255,255,.20) 0, rgba(255,255,255,0) 32%),
+            radial-gradient(circle at 90% 0%, rgba(255,255,255,.14) 0, rgba(255,255,255,0) 34%);
+        pointer-events: none;
+    }
+    .inv-topbar-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
+        flex-wrap: wrap;
+    }
+    .inv-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+    }
+    .inv-title-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.18);
+        color: #fff;
+        font-size: 1rem;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+    }
+    .inv-title-text {
+        font-size: 1.85rem;
+        font-weight: 750;
+        letter-spacing: -0.35px;
+        color: #fff;
+        line-height: 1.05;
+        margin: 0;
+    }
+    .inv-header-actions {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .inv-head-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.5rem 0.95rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.38);
+        background: rgba(255,255,255,.16);
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+    :root {
+        --pos-card-bg: #fff;
+        --pos-primary: #4f46e5;
+        --pos-border: #eef2ff;
+        --pos-text: #1e293b;
+        --pos-muted: #64748b;
+    }
+
+    .pos-product-card {
+        background: var(--pos-card-bg);
+        border: 1px solid var(--pos-border);
+        border-radius: 10px;
+        padding: 8px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+    }
+
+    .pos-product-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.1);
+        border-color: var(--pos-primary);
+    }
+
+    .pos-product-card.out-of-stock {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .pos-product-card.out-of-stock:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: var(--pos-border);
+    }
+
+    .pos-product-img {
+        width: 100%;
+        aspect-ratio: 1;
+        background: #f8fafc;
+        border-radius: 6px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .pos-product-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .pos-product-img .no-img {
+        font-size: 1.5rem;
+        color: var(--pos-muted);
+    }
+
+    .stock-pill {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--pos-text);
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 1px 6px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .pos-product-info .name {
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-bottom: 2px;
+        color: var(--pos-text);
+    }
+
+    .pos-product-info .price {
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: var(--pos-primary);
+    }
+
+    .cart-list .cart-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        border-bottom: 1px solid #f1f5f9;
+        margin-bottom: 4px;
+        border-radius: 6px;
+        transition: background 0.2s;
+    }
+
+    .cart-list .cart-item:hover {
+        background: #f8fafc;
+    }
+
+    .cart-item-info {
+        flex-grow: 1;
+        min-width: 0;
+    }
+
+    .cart-item-info .name {
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-bottom: 0;
+        color: var(--pos-text);
+    }
+
+    .cart-item-info .price {
+        font-size: 0.7rem;
+        color: var(--pos-muted);
+    }
+
+    .cart-qty-controls {
+        display: flex;
+        align-items: center;
+        background: #f1f5f9;
+        border-radius: 20px;
+        padding: 2px;
+    }
+
+    .cart-qty-controls .btn {
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6rem;
+        border-radius: 50%;
+        background: white;
+        border: none;
+        color: var(--pos-text);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    .cart-qty-controls .btn:hover {
+        background: var(--pos-primary);
+        color: white;
+    }
+
+    .cart-qty-controls .qty {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0 8px;
+        min-width: 24px;
+        text-align: center;
+    }
+
+    .cart-item-subtotal {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--pos-text);
+        min-width: 65px;
+        text-align: right;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .summary-row .label {
+        color: var(--pos-muted);
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .summary-row .value {
+        color: var(--pos-text);
+        font-weight: 700;
+    }
+
+    .animate-pop {
+        animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes pop {
+        0% { transform: scale(0.5); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Hide scrollbar for cleaner look but keep scroll functional */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+</style>
+
 <script>
     let cart = [];
     
-    // Toast Notification
     function showError(message) {
         if (typeof bootstrap !== 'undefined') {
             document.getElementById('toastMessage').innerText = message;
@@ -269,244 +475,149 @@
         }
     }
 
-    let searchInput = document.getElementById('searchProduct');
     function filterProducts() {
-        let term = (searchInput && searchInput.value ? searchInput.value.toLowerCase() : '');
-        let selectedCategory = document.getElementById('categoryFilter') ? document.getElementById('categoryFilter').value : '';
-        let items = document.querySelectorAll('.product-item');
-        items.forEach(item => {
-            let name = item.getAttribute('data-name') || '';
-            let code = item.getAttribute('data-code') || '';
-            let catId = item.getAttribute('data-category-id') || '';
-            let brandId = item.getAttribute('data-brand-id') || '';
-            let matchesSearch = name.includes(term) || code.includes(term);
-            let matchesCategory = selectedCategory === '' || catId === selectedCategory;
-            let selectedBrand = document.getElementById('brandFilter') ? document.getElementById('brandFilter').value : '';
-            let matchesBrand = selectedBrand === '' || brandId === selectedBrand;
-            item.style.display = (matchesSearch && matchesCategory && matchesBrand) ? 'block' : 'none';
+        let term = document.getElementById('searchProduct').value.toLowerCase();
+        let catId = document.getElementById('categoryFilter').value;
+        let brandId = document.getElementById('brandFilter').value;
+        
+        document.querySelectorAll('.product-item').forEach(item => {
+            let matchesSearch = item.getAttribute('data-name').includes(term) || item.getAttribute('data-code').includes(term);
+            let matchesCat = !catId || item.getAttribute('data-category-id') === catId;
+            let matchesBrand = !brandId || item.getAttribute('data-brand-id') === brandId;
+            item.style.display = (matchesSearch && matchesCat && matchesBrand) ? 'block' : 'none';
         });
     }
-    if(searchInput){
-        searchInput.addEventListener('input', filterProducts);
-    }
-    if(document.getElementById('categoryFilter')){
-        document.getElementById('categoryFilter').addEventListener('change', filterProducts);
-    }
-    if(document.getElementById('brandFilter')){
-        document.getElementById('brandFilter').addEventListener('change', filterProducts);
-    }
+
+    document.getElementById('searchProduct').addEventListener('input', filterProducts);
+    document.getElementById('categoryFilter').addEventListener('change', filterProducts);
+    document.getElementById('brandFilter').addEventListener('change', filterProducts);
 
     function addToCart(id, name, price, maxQty) {
-        let existingItem = cart.find(item => item.id === id);
-        
-        if (existingItem) {
-            if (existingItem.quantity >= maxQty) {
-                showError('Cannot add more. Stock limit reached.');
-                return;
-            }
-            existingItem.quantity++;
+        let item = cart.find(i => i.id === id);
+        if (item) {
+            if (item.quantity >= maxQty) return showError('Out of stock!');
+            item.quantity++;
         } else {
             cart.push({ id, name, price, quantity: 1, maxQty });
         }
-        
-        renderCart();
-    }
-
-    function removeFromCart(id) {
-        cart = cart.filter(item => item.id !== id);
         renderCart();
     }
 
     function updateQuantity(id, change) {
-        let item = cart.find(item => item.id === id);
+        let item = cart.find(i => i.id === id);
         if (!item) return;
-
         let newQty = item.quantity + change;
-        
-        if (newQty > item.maxQty) {
-            showError('Stock limit reached.');
-            return;
-        }
-        
-        if (newQty <= 0) {
-            removeFromCart(id);
-        } else {
-            item.quantity = newQty;
-            renderCart();
-        }
+        if (newQty > item.maxQty) return showError('Max stock reached');
+        if (newQty <= 0) cart = cart.filter(i => i.id !== id);
+        else item.quantity = newQty;
+        renderCart();
     }
 
-    function renderCart() {
-        const tbody = document.getElementById('cartTableBody');
-        const mobileTbody = document.getElementById('mobileCartTableBody');
-        const emptyMsg = document.getElementById('emptyCartMessage');
-        const mobileEmptyMsg = document.getElementById('mobileEmptyCartMessage');
-        
-        tbody.innerHTML = '';
-        if(mobileTbody) mobileTbody.innerHTML = '';
-        
-        let total = 0;
-        let count = 0;
-
-        if (cart.length === 0) {
-            emptyMsg.style.display = 'block';
-            if(mobileEmptyMsg) mobileEmptyMsg.style.display = 'block';
-        } else {
-            emptyMsg.style.display = 'none';
-            if(mobileEmptyMsg) mobileEmptyMsg.style.display = 'none';
-
-            cart.forEach(item => {
-                let subtotal = item.price * item.quantity;
-                total += subtotal;
-                count += item.quantity;
-
-                // Desktop Row
-                let row = `
-                    <tr>
-                        <td class="ps-2 py-2">
-                            <div class="fw-bold small text-truncate" style="max-width: 140px;" title="${item.name}">${item.name}</div>
-                            <small class="text-muted" style="font-size: 0.75rem;">₱${item.price.toFixed(2)}</small>
-                        </td>
-                        <td class="text-center py-2">
-                            <div class="input-group input-group-sm justify-content-center" style="width: 80px; margin: 0 auto;">
-                                <button class="btn btn-outline-secondary px-2 py-0" onclick="updateQuantity(${item.id}, -1)">-</button>
-                                <span class="input-group-text bg-white px-2 py-0 border-secondary border-opacity-25" style="min-width: 30px; justify-content: center;">${item.quantity}</span>
-                                <button class="btn btn-outline-secondary px-2 py-0" onclick="updateQuantity(${item.id}, 1)">+</button>
-                            </div>
-                        </td>
-                        <td class="text-end pe-2 py-2 fw-bold small">₱${subtotal.toFixed(2)}</td>
-                        <td class="text-end pe-2 py-2">
-                            <button class="btn btn-sm text-danger p-0" onclick="removeFromCart(${item.id})"><i class="fa-solid fa-trash"></i></button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
+    function updateCatalogStock() {
+        // Reset all displays based on original stock from data attributes
+        document.querySelectorAll('.product-item').forEach(item => {
+            let id = item.getAttribute('data-id');
+            let originalStock = parseInt(item.getAttribute('data-stock'));
+            let display = document.getElementById('stock-display-' + id);
+            let card = document.getElementById('product-card-' + id);
+            
+            if (display) {
+                // Find if item is in cart to subtract
+                let cartItem = cart.find(i => i.id == id);
+                let currentStock = originalStock - (cartItem ? cartItem.quantity : 0);
                 
-                // Mobile Row
-                if(mobileTbody) {
-                    let mobileRow = `
-                        <tr>
-                            <td>
-                                <div class="fw-bold text-truncate" style="max-width: 120px;">${item.name}</div>
-                                <small class="text-muted">₱${item.price.toFixed(2)}</small>
-                            </td>
-                            <td class="text-center">
-                                <div class="btn-group btn-group-sm">
-                                    <button class="btn btn-outline-secondary p-1" onclick="updateQuantity(${item.id}, -1)">-</button>
-                                    <button class="btn btn-light disabled p-1 text-dark border-top border-bottom" style="width: 25px;">${item.quantity}</button>
-                                    <button class="btn btn-outline-secondary p-1" onclick="updateQuantity(${item.id}, 1)">+</button>
-                                </div>
-                            </td>
-                            <td class="text-end fw-bold">₱${subtotal.toFixed(2)}</td>
-                        </tr>
-                    `;
-                    mobileTbody.innerHTML += mobileRow;
+                display.innerText = currentStock;
+                
+                // Update styling based on current stock
+                if (currentStock <= 0) {
+                    card.classList.add('out-of-stock');
+                    display.classList.add('bg-danger', 'text-white');
+                } else {
+                    card.classList.remove('out-of-stock');
+                    display.classList.remove('bg-danger', 'text-white');
                 }
-            });
-        }
-
-        document.getElementById('totalAmount').innerText = '₱' + total.toFixed(2);
-        if(document.getElementById('mobileTotalAmount')) document.getElementById('mobileTotalAmount').innerText = '₱' + total.toFixed(2);
-        if(document.getElementById('mobileOffcanvasTotal')) document.getElementById('mobileOffcanvasTotal').innerText = '₱' + total.toFixed(2);
-        
-        document.getElementById('mobileCartCount').innerText = count;
-        
-        calculateChange();
-    }
-
-    function calculateChange() {
-        let total = parseFloat(document.getElementById('totalAmount').innerText.replace('₱', '').replace(',', ''));
-        let received = parseFloat(document.getElementById('paymentReceived').value) || 0;
-        
-        // Sync mobile/desktop inputs if needed, or just handle independently. 
-        // For simplicity, let's sync them if one changes.
-        
-        let change = received - total;
-        if (change < 0) change = 0;
-        
-        document.getElementById('changeAmount').innerText = '₱' + change.toFixed(2);
-        if(document.getElementById('mobileChangeAmount')) document.getElementById('mobileChangeAmount').innerText = '₱' + change.toFixed(2);
-    }
-
-    document.getElementById('paymentReceived').addEventListener('input', function(e) {
-        if(document.getElementById('mobilePaymentReceived')) document.getElementById('mobilePaymentReceived').value = e.target.value;
-        calculateChange();
-    });
-    
-    if(document.getElementById('mobilePaymentReceived')) {
-        document.getElementById('mobilePaymentReceived').addEventListener('input', function(e) {
-            document.getElementById('paymentReceived').value = e.target.value;
-            // Also update the local received var for calculation
-             let total = parseFloat(document.getElementById('totalAmount').innerText.replace('₱', '').replace(',', ''));
-             let received = parseFloat(e.target.value) || 0;
-             let change = received - total;
-             if (change < 0) change = 0;
-             document.getElementById('changeAmount').innerText = '₱' + change.toFixed(2);
-             document.getElementById('mobileChangeAmount').innerText = '₱' + change.toFixed(2);
+            }
         });
     }
 
-    function processSale(isMobile = false) {
+    function renderCart() {
+        const container = document.getElementById('cartTableBody');
+        const emptyMsg = document.getElementById('emptyCartMessage');
+        container.innerHTML = '';
+        
+        let total = 0;
         if (cart.length === 0) {
-            showError('Cart is empty!');
-            return;
+            emptyMsg.style.display = 'block';
+        } else {
+            emptyMsg.style.display = 'none';
+            cart.forEach(item => {
+                let subtotal = item.price * item.quantity;
+                total += subtotal;
+                container.innerHTML += `
+                    <div class="cart-item">
+                        <div class="cart-item-info">
+                            <div class="name text-truncate">${item.name}</div>
+                            <div class="price">₱${item.price.toFixed(2)}</div>
+                        </div>
+                        <div class="cart-qty-controls">
+                            <button class="btn" onclick="updateQuantity(${item.id}, -1)"><i class="fa-solid fa-minus"></i></button>
+                            <span class="qty">${item.quantity}</span>
+                            <button class="btn" onclick="updateQuantity(${item.id}, 1)"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div class="cart-item-subtotal">₱${subtotal.toFixed(2)}</div>
+                        <button class="btn btn-link text-danger p-0 border-0" onclick="removeFromCart(${item.id})">
+                            <i class="fa-solid fa-trash-can small opacity-50"></i>
+                        </button>
+                    </div>
+                `;
+            });
         }
+        document.getElementById('subtotalAmount').innerText = '₱' + total.toFixed(2);
+        document.getElementById('totalAmount').innerText = '₱' + total.toFixed(2);
+        calculateChange();
+        updateCatalogStock();
+    }
 
-        let total = parseFloat(document.getElementById('totalAmount').innerText.replace('₱', '').replace(',', ''));
-        let receivedInput = isMobile ? document.getElementById('mobilePaymentReceived') : document.getElementById('paymentReceived');
-        let paymentReceived = parseFloat(receivedInput.value) || 0;
+    function removeFromCart(id) {
+        cart = cart.filter(i => i.id !== id);
+        renderCart();
+    }
 
-        if (paymentReceived < total) {
-            let shortage = (total - paymentReceived).toFixed(2);
-            showError(`Insufficient payment! You are short by ₱${shortage}.`);
-            return;
-        }
+    function calculateChange() {
+        let totalText = document.getElementById('totalAmount').innerText.replace('₱', '').replace(/,/g, '');
+        let total = parseFloat(totalText) || 0;
+        let received = parseFloat(document.getElementById('paymentReceived').value) || 0;
+        let change = Math.max(0, received - total);
+        document.getElementById('changeAmount').innerText = '₱' + change.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
 
-        // Send to server
+    document.getElementById('paymentReceived').addEventListener('input', calculateChange);
+
+    function processSale() {
+        if (cart.length === 0) return showError('Cart is empty!');
+        let totalText = document.getElementById('totalAmount').innerText.replace('₱', '').replace(/,/g, '');
+        let total = parseFloat(totalText) || 0;
+        let received = parseFloat(document.getElementById('paymentReceived').value) || 0;
+        
+        if (received < total) return showError(`Insufficient payment. Need ₱${(total - received).toFixed(2)} more.`);
+
         $.ajax({
             url: '{{ route("staff.pos.process") }}',
             method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                cart: cart,
-                payment_received: paymentReceived
-            },
+            data: { _token: '{{ csrf_token() }}', cart, payment_received: received },
             success: function(data) {
                 if (data.success) {
-                    // Populate and show success modal
-                    document.getElementById('successTrxId').innerText = '#' + data.transaction_number;
-                    document.getElementById('successTotal').innerText = '₱' + parseFloat(data.total_amount).toFixed(2);
-                    document.getElementById('successChange').innerText = '₱' + parseFloat(data.change_returned).toFixed(2);
-                    
-                    if (typeof bootstrap !== 'undefined') {
-                        const successModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('saleSuccessModal'));
-                        successModal.show();
-                    } else {
-                        alert('Sale Completed! TRX: ' + data.transaction_number + '\nTotal: ₱' + parseFloat(data.total_amount).toFixed(2) + '\nChange: ₱' + parseFloat(data.change_returned).toFixed(2));
-                        location.reload();
-                    }
-                    
-                    // Clear cart locally so if they close modal without reload (though backdrop is static), it's clear
-                    cart = [];
-                    renderCart();
-                    document.getElementById('paymentReceived').value = '';
-                    if(document.getElementById('mobilePaymentReceived')) document.getElementById('mobilePaymentReceived').value = '';
-                    calculateChange();
+                    document.getElementById('successTrxId').innerText = data.transaction_number;
+                    document.getElementById('successTotal').innerText = '₱' + parseFloat(data.total_amount).toLocaleString(undefined, {minimumFractionDigits: 2});
+                    document.getElementById('successChange').innerText = '₱' + parseFloat(data.change_returned).toLocaleString(undefined, {minimumFractionDigits: 2});
+                    bootstrap.Modal.getOrCreateInstance(document.getElementById('saleSuccessModal')).show();
                 } else {
-                    alert('Error: ' + data.error);
+                    showError(data.error);
                 }
             },
-            error: function(xhr) {
-                 console.error(xhr.responseText);
-                 let msg = 'Transaction failed.';
-                 if(xhr.responseJSON && xhr.responseJSON.error) {
-                     msg = xhr.responseJSON.error;
-                 } else {
-                     msg += ' Check console for details. (' + xhr.status + ')';
-                 }
-                 showError(msg);
-            }
+            error: function() { showError('Transaction failed.'); }
         });
     }
 </script>
 @endsection
+

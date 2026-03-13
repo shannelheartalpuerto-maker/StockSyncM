@@ -1,117 +1,252 @@
 @extends('layouts.app')
 
 @section('content')
-<link href="{{ asset('css/admin-dashboard-design.css') }}?v={{ time() }}" rel="stylesheet">
-<div class="container-fluid px-4 admin-dashboard-container animate-fade-up">
-    <!-- Header -->
-    <div class="dashboard-header text-center mb-4">
-        <h2 class="dashboard-title"><i class="fa-solid fa-clipboard-list me-3"></i>My Stock Logs</h2>
-        <p class="dashboard-subtitle">Track your personal stock movements and history.</p>
+@push('styles')
+<link href="{{ asset('css/staff-design.css') }}?v={{ time() }}" rel="stylesheet">
+<style>
+    .inv-topbar {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        padding: 1.05rem 1.3rem;
+        background: linear-gradient(130deg, #0f766e 0%, #0ea5e9 55%, #2563eb 100%);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        box-shadow: 0 10px 26px rgba(14, 116, 144, 0.18);
+    }
+    .inv-topbar::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            radial-gradient(circle at 15% 20%, rgba(255,255,255,.20) 0, rgba(255,255,255,0) 32%),
+            radial-gradient(circle at 90% 0%, rgba(255,255,255,.14) 0, rgba(255,255,255,0) 34%);
+        pointer-events: none;
+    }
+    .inv-topbar-inner {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.9rem;
+        flex-wrap: wrap;
+    }
+    .inv-title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+    }
+    .inv-title-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.18);
+        color: #fff;
+        font-size: 1rem;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+    }
+    .inv-title-text {
+        font-size: 1.85rem;
+        font-weight: 750;
+        letter-spacing: -0.35px;
+        color: #fff;
+        line-height: 1.05;
+        margin: 0;
+    }
+    .inv-header-actions {
+        position: relative;
+        z-index: 1;
+    }
+    .inv-header-actions .filter-btn-group {
+        border-color: rgba(255,255,255,.45);
+        background: rgba(255,255,255,.12);
+    }
+    .inv-header-actions .filter-btn-group .btn {
+        color: #fff;
+        border-right-color: rgba(255,255,255,.35);
+    }
+    .inv-header-actions .filter-btn-group .btn.active {
+        background: #fff;
+        color: #1d4ed8 !important;
+    }
+    .inv-header-actions .filter-btn-group .btn:not(.active):hover {
+        background: rgba(255,255,255,.2);
+    }
+    .period-filter-pill {
+        background: #f3f4f6;
+        padding: 4px;
+        border-radius: 12px;
+        display: inline-flex;
+    }
+    .period-filter-pill .btn {
+        border: none;
+        border-radius: 9px;
+        padding: 6px 16px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        transition: all 0.2s;
+    }
+    .period-filter-pill .btn.active {
+        background: white;
+        color: var(--primary-color);
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .log-tabs-modern {
+        border-bottom: 2px solid var(--border-color);
+        gap: 2rem;
+    }
+    .log-tabs-modern .nav-link {
+        border: none;
+        background: none;
+        padding: 1rem 0.5rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        position: relative;
+        transition: color 0.3s;
+    }
+    .log-tabs-modern .nav-link.active {
+        color: var(--primary-color);
+    }
+    .log-tabs-modern .nav-link.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--primary-color);
+    }
+    .logs-tabs-wrap {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 0.35rem;
+        display: inline-flex;
+    }
+    .logs-pane-shell {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(0,0,0,.04);
+        padding: 0.4rem;
+    }
+</style>
+@endpush
+
+<div class="container-fluid px-4 staff-container animate-fade-up">
+    <div class="inv-topbar mb-4">
+        <div class="inv-topbar-inner">
+            <div class="inv-title-wrap">
+                <span class="inv-title-icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                <h5 class="inv-title-text">Stock History & Logs</h5>
+            </div>
+            <div class="inv-header-actions">
+                <div class="filter-btn-group" id="staffPeriodFilterGroup">
+                    <a href="{{ route('staff.logs', ['period' => 'today']) }}" data-period="today" class="btn btn-sm {{ $period == 'today' ? 'active' : '' }}">Today</a>
+                    <a href="{{ route('staff.logs', ['period' => 'week']) }}" data-period="week" class="btn btn-sm {{ $period == 'week' ? 'active' : '' }}">This Week</a>
+                    <a href="{{ route('staff.logs', ['period' => 'month']) }}" data-period="month" class="btn btn-sm {{ $period == 'month' ? 'active' : '' }}">This Month</a>
+                    <a href="{{ route('staff.logs', ['period' => 'all']) }}" data-period="all" class="btn btn-sm {{ $period == 'all' ? 'active' : '' }}">All Time</a>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="content-card">
-                <div class="card-header-custom py-3">
-                    <h5 class="mb-0 fw-bold"><i class="fa-solid fa-clock-rotate-left me-2"></i>Stock History & Logs</h5>
+            
+            <!-- Stat Cards Section (Matching Dashboard) -->
+            <div class="row g-4 mb-5">
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Total Returned</span>
+                            <div class="stat-icon icon-success">
+                                <i class="fa-solid fa-rotate-left"></i>
+                            </div>
+                        </div>
+                        <h3 class="stat-value text-success" id="staffStatReturned">+{{ number_format($totalReturned) }}</h3>
+                    </div>
                 </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Total Stock Out</span>
+                            <div class="stat-icon icon-primary">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </div>
+                        </div>
+                        <h3 class="stat-value text-primary" id="staffStatStockOut">-{{ number_format($totalStockOut) }}</h3>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Total Damaged</span>
+                            <div class="stat-icon icon-danger">
+                                <i class="fa-solid fa-burst"></i>
+                            </div>
+                        </div>
+                        <h3 class="stat-value text-danger" id="staffStatDamaged">{{ number_format($totalDamaged) }}</h3>
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-xl-3">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Activity Count</span>
+                            <div class="stat-icon icon-info">
+                                <i class="fa-solid fa-clipboard-list"></i>
+                            </div>
+                        </div>
+                        <h3 class="stat-value text-info" id="staffStatEntries">{{ number_format($totalEntries) }}</h3>
+                    </div>
+                </div>
+            </div>
 
+            <div class="content-card">
                 <div class="card-body-custom">
-                    <!-- Filter & Summary Section -->
-                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
-                        <h5 class="mb-3 mb-md-0 fw-bold text-dark">Activity Summary</h5>
-                        <div class="btn-group" role="group" aria-label="Time Period Filter" id="staffPeriodFilterGroup">
-                            <a href="{{ route('staff.logs', ['period' => 'today']) }}" data-period="today" class="btn btn-outline-primary {{ $period == 'today' ? 'active' : '' }}">Today</a>
-                            <a href="{{ route('staff.logs', ['period' => 'week']) }}" data-period="week" class="btn btn-outline-primary {{ $period == 'week' ? 'active' : '' }}">This Week</a>
-                            <a href="{{ route('staff.logs', ['period' => 'month']) }}" data-period="month" class="btn btn-outline-primary {{ $period == 'month' ? 'active' : '' }}">This Month</a>
-                            <a href="{{ route('staff.logs', ['period' => 'all']) }}" data-period="all" class="btn btn-outline-primary {{ $period == 'all' ? 'active' : '' }}">All Time</a>
-                        </div>
-                    </div>
-
-                    <div class="row g-4 mb-4">
-                        <!-- Returned Summary -->
-                        <div class="col-12 col-md-4">
-                            <div class="stat-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <p class="stat-label">Total Returned</p>
-                                        <h3 class="stat-value text-success" id="staffStatReturned">+{{ number_format($totalReturned) }}</h3>
-                                        <small class="text-muted">Items Restocked</small>
-                                    </div>
-                                    <div class="stat-icon success">
-                                        <i class="fa-solid fa-rotate-left"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Stock Out Summary -->
-                        <div class="col-12 col-md-4">
-                            <div class="stat-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <p class="stat-label">Total Stock Out</p>
-                                        <h3 class="stat-value text-primary" id="staffStatStockOut">-{{ number_format($totalStockOut) }}</h3>
-                                        <small class="text-muted">Items Sold/Removed</small>
-                                    </div>
-                                    <div class="stat-icon primary">
-                                        <i class="fa-solid fa-arrow-up"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Damaged Summary -->
-                        <div class="col-12 col-md-4">
-                            <div class="stat-card">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <p class="stat-label">Total Damaged</p>
-                                        <h3 class="stat-value text-danger" id="staffStatDamaged">{{ number_format($totalDamaged) }}</h3>
-                                        <small class="text-muted">Items Lost</small>
-                                    </div>
-                                    <div class="stat-icon danger">
-                                        <i class="fa-solid fa-triangle-exclamation"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <ul class="nav nav-pills dashboard-tabs mb-4 d-flex justify-content-center" id="logTabs" role="tablist">
+                    <div class="d-flex justify-content-center mb-4">
+                    <ul class="nav nav-pills dashboard-tabs logs-tabs-wrap" id="logTabs" role="tablist">
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="returned-tab" data-bs-toggle="tab" data-bs-target="#returned" type="button" role="tab" aria-controls="returned" aria-selected="true">
+                            <button class="nav-link active rounded-pill px-4 py-2" id="returned-tab" data-bs-toggle="tab" data-bs-target="#returned" type="button" role="tab">
                                 <i class="fa-solid fa-rotate-left me-2"></i>Returned
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="stock-out-tab" data-bs-toggle="tab" data-bs-target="#stock-out" type="button" role="tab" aria-controls="stock-out" aria-selected="false">
-                                <i class="fa-solid fa-arrow-up me-2"></i>Stock Out
+                            <button class="nav-link rounded-pill px-4 py-2" id="stock-out-tab" data-bs-toggle="tab" data-bs-target="#stock-out" type="button" role="tab">
+                                <i class="fa-solid fa-arrow-up-from-bracket me-2"></i>Stock Out
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="damaged-tab" data-bs-toggle="tab" data-bs-target="#damaged" type="button" role="tab" aria-controls="damaged" aria-selected="false">
+                            <button class="nav-link rounded-pill px-4 py-2" id="damaged-tab" data-bs-toggle="tab" data-bs-target="#damaged" type="button" role="tab">
                                 <i class="fa-solid fa-triangle-exclamation me-2"></i>Damaged
                             </button>
                         </li>
                     </ul>
+                    </div>
 
-                    <div class="tab-content" id="logTabsContent">
+                    <div class="tab-content pt-2" id="logTabsContent">
                         <!-- Returned Tab -->
-                        <div class="tab-pane fade show active" id="returned" role="tabpanel" aria-labelledby="returned-tab">
-                            <div id="returned-content">
+                        <div class="tab-pane fade show active" id="returned" role="tabpanel">
+                            <div id="returned-content" class="animate-fade-up logs-pane-shell">
                                 @include('staff.partials.logs_returned')
                             </div>
                         </div>
 
                         <!-- Stock Out Tab -->
-                        <div class="tab-pane fade" id="stock-out" role="tabpanel" aria-labelledby="stock-out-tab">
-                            <div id="stock-out-content">
+                        <div class="tab-pane fade" id="stock-out" role="tabpanel">
+                            <div id="stock-out-content" class="animate-fade-up logs-pane-shell">
                                 @include('staff.partials.logs_stockout')
                             </div>
                         </div>
 
                         <!-- Damaged Tab -->
-                        <div class="tab-pane fade" id="damaged" role="tabpanel" aria-labelledby="damaged-tab">
-                            <div id="damaged-content">
+                        <div class="tab-pane fade" id="damaged" role="tabpanel">
+                            <div id="damaged-content" class="animate-fade-up logs-pane-shell">
                                 @include('staff.partials.logs_damaged')
                             </div>
                         </div>
@@ -192,6 +327,7 @@
         const statReturned = document.getElementById('staffStatReturned');
         const statStockOut = document.getElementById('staffStatStockOut');
         const statDamaged = document.getElementById('staffStatDamaged');
+        const statEntries = document.getElementById('staffStatEntries');
         function anim(el){ if(!el) return; el.classList.remove('animate-fade-up'); void el.offsetWidth; el.classList.add('animate-fade-up'); setTimeout(()=>el.classList.remove('animate-fade-up'), 600); }
 
         if (periodGroup) {
@@ -214,7 +350,8 @@
                             statReturned.textContent = `+${Number(data.summaries.returned).toLocaleString()}`;
                             statStockOut.textContent = `-${Number(data.summaries.stock_out).toLocaleString()}`;
                             statDamaged.textContent = Number(data.summaries.damaged).toLocaleString();
-                            [statReturned, statStockOut, statDamaged].forEach(anim);
+                            if(statEntries) statEntries.textContent = Number(data.summaries.total_entries).toLocaleString();
+                            [statReturned, statStockOut, statDamaged, statEntries].forEach(anim);
                         }
                         periodGroup.querySelectorAll('a[data-period]').forEach(a => a.classList.remove('active'));
                         link.classList.add('active');

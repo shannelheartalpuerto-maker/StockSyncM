@@ -57,7 +57,7 @@
 @push('modals')
 @foreach($transactions as $trx)
 @if($trx->status !== 'returned')
-<div class="modal fade" id="returnModal{{ $trx->id }}" tabindex="-1" aria-hidden="true">
+<div class="modal smooth-modal" id="returnModal{{ $trx->id }}" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
             <form action="{{ route('staff.transactions.return', $trx->id) }}" method="POST">

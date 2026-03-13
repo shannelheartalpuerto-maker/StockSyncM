@@ -1,4 +1,4 @@
-const CACHE_NAME = 'stocksync-v1';
+const CACHE_NAME = 'stocksync-v5';
 const STATIC_ASSETS = [
     '/vendor/nprogress/nprogress.min.js',
     '/vendor/nprogress/nprogress.min.css',
@@ -39,23 +39,36 @@ self.addEventListener('fetch', (event) => {
 
     const url = new URL(event.request.url);
     
-    // Cache First for Static Assets (CSS, JS, Images, Fonts, Vendor libs)
-    if (url.pathname.startsWith('/vendor/') || 
-        url.pathname.startsWith('/css/') || 
-        url.pathname.startsWith('/js/') ||
+    // Network First for CSS/JS (so design updates show immediately)
+    if (url.pathname.startsWith('/css/') || url.pathname.startsWith('/js/')) {
+        event.respondWith(
+            fetch(event.request)
+                .then((response) => {
+                    const responseToCache = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => {
+                        cache.put(event.request, responseToCache);
+                    });
+                    return response;
+                })
+                .catch(() => {
+                    return caches.match(event.request).then((response) => {
+                        if (response) return response;
+                    });
+                })
+        );
+    }
+    // Cache First for vendor libs, images, fonts
+    else if (url.pathname.startsWith('/vendor/') || 
         url.pathname.startsWith('/fonts/') ||
         url.pathname.match(/\.(png|jpg|jpeg|svg|ico)$/)) {
         
         event.respondWith(
             caches.match(event.request).then((response) => {
-                // Return cached response if found
                 if (response) {
                     return response;
                 }
                 
-                // Otherwise fetch from network and cache it
                 return fetch(event.request).then((fetchResponse) => {
-                    // Check if valid response
                     if (!fetchResponse || fetchResponse.status !== 200 || fetchResponse.type !== 'basic') {
                         return fetchResponse;
                     }

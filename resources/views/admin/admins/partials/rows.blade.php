@@ -1,40 +1,38 @@
 @foreach($admins as $admin)
 <tr>
-    <td class="ps-3 fw-bold text-dark">{{ $admin->name }}</td>
+    <td class="ps-4">
+        <div class="fw-bold text-dark">{{ $admin->name }}</div>
+        <div class="text-muted small">Admin Account</div>
+    </td>
     <td>{{ $admin->email }}</td>
     <td>
-        <span class="badge bg-{{ $admin->status == 'active' ? 'success' : 'danger' }} rounded-pill">
-            {{ ucfirst($admin->status) }}
-        </span>
+        @if($admin->status == 'active')
+            <span class="status-badge status-success">Active</span>
+        @else
+            <span class="status-badge status-danger">Suspended</span>
+        @endif
     </td>
-    <td class="ps-3">
-        <div class="dropdown dropend">
-            <button class="btn btn-sm btn-light rounded-circle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="viewport">
-                <i class="fa-solid fa-gear"></i>
-            </button>
-            <div class="dropdown-menu p-2" style="min-width: auto;">
-                <div class="d-flex gap-2">
-                    @if($admin->status == 'active')
-                        <button type="button" class="btn btn-warning btn-sm text-white" data-bs-toggle="modal" data-bs-target="#ajax-suspendAdminModal{{ $admin->id }}">
-                            <i class="fa-solid fa-ban me-1"></i>Suspend
-                        </button>
-                    @else
-                        <form action="{{ route('admin.admins.update', $admin->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('PUT')
-                            <input type="hidden" name="status" value="active">
-                            <button type="submit" class="btn btn-success btn-sm text-white">
-                                <i class="fa-solid fa-check me-1"></i>Activate
-                            </button>
-                        </form>
-                    @endif
-                    
-                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#ajax-deleteAdminModal{{ $admin->id }}">
-                        <i class="fa-solid fa-trash me-1"></i>Delete
+    <td class="text-end pe-4">
+        <div class="btn-group shadow-sm rounded-3 overflow-hidden">
+            @if($admin->status == 'active')
+                <button type="button" class="btn btn-white btn-sm border-end" data-bs-toggle="modal" data-bs-target="#ajax-suspendAdminModal{{ $admin->id }}" title="Suspend">
+                    <i class="fa-solid fa-user-lock text-warning"></i>
+                </button>
+            @else
+                <form action="{{ route('admin.admins.update', $admin->id) }}" method="POST" class="d-inline">
+                    @csrf
+                    @method('PUT')
+                    <input type="hidden" name="status" value="active">
+                    <button type="submit" class="btn btn-white btn-sm border-end" title="Activate">
+                        <i class="fa-solid fa-user-check text-success"></i>
                     </button>
-                </div>
-            </div>
+                </form>
+            @endif
+            
+            <button type="button" class="btn btn-white btn-sm text-danger" data-bs-toggle="modal" data-bs-target="#ajax-deleteAdminModal{{ $admin->id }}" title="Delete">
+                <i class="fa-solid fa-trash"></i>
+            </button>
         </div>
     </td>
-    </tr>
+</tr>
 @endforeach

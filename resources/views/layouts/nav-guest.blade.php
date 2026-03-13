@@ -1,8 +1,8 @@
 <nav class="navbar navbar-expand-md navbar-light sticky-top">
     <div class="container">
         <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url('/') }}">
-            <i class="fa-solid fa-boxes-stacked text-primary me-2"></i>
-            {{ config('app.name', 'StockSync') }}
+            <i class="fa-solid fa-boxes-stacked text-indigo me-2"></i>
+            <span class="text-indigo">{{ config('app.name', 'StockSync') }}</span>
         </a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
             <i class="fa-solid fa-bars text-dark"></i>

@@ -53,7 +53,7 @@ class ProductController extends Controller
         $categories = \App\Models\Category::where('admin_id', $this->getAdminId())->get();
         $brands = \App\Models\Brand::where('admin_id', $this->getAdminId())->get();
         
-        if ($request->ajax()) {
+            if ($request->ajax()) {
             $rowsHtml = view('admin.products.partials.rows', compact('products'))->render();
             $paginationHtml = view('admin.products.partials.pagination', compact('products'))->render();
             $modalsHtml = view('admin.products.partials.modals', compact('products', 'categories', 'brands'))->render();
@@ -84,16 +84,7 @@ class ProductController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $ext = $file->getClientOriginalExtension();
-            if (!$ext) {
-                $mime = $file->getMimeType();
-                $ext = $mime ? explode('/', $mime)[1] : 'jpg';
-            }
-            $filename = \Illuminate\Support\Str::uuid() . '.' . $ext;
-            // Move directly to public/storage/products to bypass symlink issues on shared hosting
-            $file->move(public_path('storage/products'), $filename);
-            $imagePath = 'products/' . $filename;
+            $imagePath = $request->file('image')->store('products', 'public');
         }
 
         $product = \App\Models\Product::create([
@@ -167,19 +158,10 @@ class ProductController extends Controller
 
         if ($request->hasFile('image')) {
             // Delete old image if exists
-            if ($product->image && file_exists(public_path('storage/' . $product->image))) {
-                unlink(public_path('storage/' . $product->image));
+            if ($product->image) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($product->image);
             }
-            $file = $request->file('image');
-            $ext = $file->getClientOriginalExtension();
-            if (!$ext) {
-                $mime = $file->getMimeType();
-                $ext = $mime ? explode('/', $mime)[1] : 'jpg';
-            }
-            $filename = \Illuminate\Support\Str::uuid() . '.' . $ext;
-            // Move directly to public/storage/products
-            $file->move(public_path('storage/products'), $filename);
-            $data['image'] = 'products/' . $filename;
+            $data['image'] = $request->file('image')->store('products', 'public');
         }
 
         $product->update($data);

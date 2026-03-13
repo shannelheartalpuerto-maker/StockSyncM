@@ -31,72 +31,133 @@
 
     <!-- Styles -->
     <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/staff-design.css') }}?v={{ time() }}" rel="stylesheet">
     <link href="{{ asset('css/custom-auth.css') }}?v={{ time() }}" rel="stylesheet">
+    <link href="{{ asset('css/admin-mobile.css') }}?v={{ time() }}" rel="stylesheet">
     @stack('styles')
     
     <style>
         /* Prevent layout shift by forcing scrollbar */
         html { overflow-y: scroll; }
-        
-        /* Stat Card Gradient Design */
-        .stat-card {
-            background: #ffffff;
-            border: 0 !important;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+        /* Remove NProgress spinner (top-right) to prevent nav jitter on page switches */
+        #nprogress .spinner {
+            display: none !important;
+        }
+
+        /* Keep admin pages tight below top navbar */
+        body.admin-layout main.py-4 {
+            padding-top: 0.5rem !important;
+        }
+
+        /* Fast app-like page transition for full-page navigation */
+        #app main {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+            transition: opacity 100ms ease-out, transform 100ms ease-out, filter 100ms ease-out;
+            will-change: opacity, transform, filter;
+        }
+        body.page-leaving #app main {
+            opacity: 0.9;
+            transform: translateY(1px);
+            filter: blur(0.35px);
+        }
+
+        /* Fast Bootstrap tab switch transition */
+        .tab-content {
             position: relative;
-            overflow: hidden;
-            border-radius: 12px;
         }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+        .tab-content > .tab-pane {
+            transition: opacity 70ms linear;
+            transform: none !important;
+        }
+        .tab-content > .tab-pane.fade {
+            transition: opacity 70ms linear !important;
+        }
+
+        /* ══════ CRITICAL MOBILE CSS - Prevent FOUC ══════ */
+        /* Hide bottom nav on desktop */
+        .admin-bottom-nav,
+        .staff-bottom-nav {
+            display: none;
         }
         
-        /* Gradient Accents - Full Colored Backgrounds (Slightly more visible) */
-        .card-gradient-primary { background: linear-gradient(135deg, #e3f2fd 0%, #90caf9 100%) !important; color: #0c4a6e; border-bottom: 0 !important; }
-        .card-gradient-success { background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%) !important; color: #14532d; border-bottom: 0 !important; }
-        .card-gradient-warning { background: linear-gradient(135deg, #fff8e1 0%, #ffe082 100%) !important; color: #713f12; border-bottom: 0 !important; }
-        .card-gradient-info    { background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%) !important; color: #155e75; border-bottom: 0 !important; }
-        .card-gradient-danger  { background: linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%) !important; color: #7f1d1d; border-bottom: 0 !important; }
-
-        /* Adjust icon wrapper to blend in */
-        .card-gradient-primary .icon-wrapper { background: rgba(255, 255, 255, 0.5) !important; color: #0284c7 !important; }
-        .card-gradient-success .icon-wrapper { background: rgba(255, 255, 255, 0.5) !important; color: #16a34a !important; }
-        .card-gradient-warning .icon-wrapper { background: rgba(255, 255, 255, 0.5) !important; color: #d97706 !important; }
-        .card-gradient-info    .icon-wrapper { background: rgba(255, 255, 255, 0.5) !important; color: #0891b2 !important; }
-        .card-gradient-danger  .icon-wrapper { background: rgba(255, 255, 255, 0.5) !important; color: #dc2626 !important; }
-
-        .icon-wrapper {
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
-            transition: transform 0.3s ease;
-        }
-        .stat-card:hover .icon-wrapper {
-            transform: scale(1.1);
-        }
-
+        /* Mobile: Style bottom nav immediately */
         @media (max-width: 767.98px) {
-            .bg-light-mobile {
-                background-color: #f8f9fa;
+            .admin-bottom-nav,
+            .staff-bottom-nav {
+                display: flex !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                right: 0 !important;
+                z-index: 1040 !important;
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(20px) !important;
+                -webkit-backdrop-filter: blur(20px) !important;
+                border-top: 0.5px solid rgba(0, 0, 0, 0.06) !important;
+                box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06) !important;
+                padding: 0 !important;
+                padding-bottom: env(safe-area-inset-bottom, 0px) !important;
             }
-            /* Widen container on mobile for better space usage */
-            .container {
-                padding-left: 12px;
-                padding-right: 12px;
+            .admin-bottom-nav-inner,
+            .staff-bottom-nav-inner {
+                display: flex !important;
+                align-items: stretch !important;
+                justify-content: space-around !important;
+                width: 100% !important;
             }
-            /* Increase touch targets for inputs and buttons */
-            .btn, .form-control, .form-select {
-                min-height: 44px;
+            .admin-bottom-nav .bottom-nav-item,
+            .staff-bottom-nav .bottom-nav-item {
+                flex: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-decoration: none !important;
+                color: #94a3b8 !important;
+                font-size: 0.65rem !important;
+                font-weight: 600 !important;
+                padding: 0.6rem 0.25rem 0.5rem !important;
+                gap: 0.2rem !important;
             }
-            /* Better spacing for stacked columns */
-            .row > div {
-                margin-bottom: 0.5rem;
+            .admin-bottom-nav .bottom-nav-item i,
+            .staff-bottom-nav .bottom-nav-item i {
+                font-size: 1.2rem !important;
             }
-            /* Fix navbar collapse alignment */
-            .navbar-collapse {
-                padding-top: 1rem;
+            .admin-bottom-nav .bottom-nav-item.is-active,
+            .staff-bottom-nav .bottom-nav-item.is-active {
+                color: #4f46e5 !important;
+            }
+            .bottom-nav-home {
+                flex: 1 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+            .bottom-nav-home-btn {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 54px !important;
+                height: 54px !important;
+                border-radius: 50% !important;
+                background: linear-gradient(145deg, #4f46e5 0%, #7c3aed 50%, #6366f1 100%) !important;
+                color: #fff !important;
+                font-size: 1.25rem !important;
+                text-decoration: none !important;
+                box-shadow: 0 4px 20px rgba(79, 70, 229, 0.45) !important;
+                border: 3.5px solid #fff !important;
+                margin-top: -28px !important;
+            }
+            /* Ensure body has padding for fixed bottom nav */
+            body.admin-layout,
+            body.staff-layout {
+                padding-bottom: 85px !important;
             }
         }
+        /* ══════ END CRITICAL MOBILE CSS ══════ */
     </style>
 
     <script>
@@ -119,11 +180,53 @@
         });
         
         document.addEventListener('DOMContentLoaded', () => {
+            NProgress.configure({ showSpinner: false });
             NProgress.start();
-            
+
             // Bind to clicks for instant feedback
             document.querySelectorAll('a:not([target="_blank"]):not([href^="#"])').forEach(link => {
-                link.addEventListener('click', () => {
+                link.addEventListener('click', (event) => {
+                    // Ignore modified clicks/new-tab behavior and non-HTTP links
+                    if (
+                        event.defaultPrevented ||
+                        event.metaKey || event.ctrlKey || event.shiftKey || event.altKey ||
+                        link.hasAttribute('download') ||
+                        link.getAttribute('rel') === 'external'
+                    ) {
+                        return;
+                    }
+
+                    // Skip links explicitly used as AJAX filters/actions
+                    if (
+                        link.hasAttribute('data-period') ||
+                        link.hasAttribute('data-ajax') ||
+                        link.closest('#periodFilterGroup')
+                    ) {
+                        return;
+                    }
+
+                    const href = link.getAttribute('href') || '';
+                    if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+                        return;
+                    }
+
+                    // Respect links handled by Bootstrap JS toggles
+                    if (link.hasAttribute('data-bs-toggle')) {
+                        return;
+                    }
+
+                    // Add a short exit transition for same-origin page navigation
+                    const destination = new URL(link.href, window.location.origin);
+                    if (destination.origin === window.location.origin) {
+                        event.preventDefault();
+                        document.body.classList.add('page-leaving');
+                        NProgress.start();
+                        setTimeout(() => {
+                            window.location.href = destination.href;
+                        }, 70);
+                        return;
+                    }
+
                     NProgress.start();
                 });
             });
@@ -134,10 +237,11 @@
                     NProgress.start();
                 });
             });
+
         });
     </script>
 </head>
-<body class="bg-light">
+<body class="bg-light {{ auth()->check() && auth()->user()->isAdmin() ? 'admin-layout' : '' }} {{ auth()->check() && auth()->user()->isStaff() ? 'staff-layout' : '' }}">
     <div id="app">
         @auth
             @if(auth()->user()->isAdmin())
