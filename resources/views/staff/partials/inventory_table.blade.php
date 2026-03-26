@@ -150,3 +150,47 @@
     </div>
 </div>
 @endforeach
+
+<!-- Edit Inventory Thresholds Modal -->
+<div class="modal fade" id="editThresholdsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <form action="{{ route('staff.thresholds.update') }}" method="POST">
+                @csrf
+                <div class="modal-header bg-primary text-white border-0 p-4">
+                    <h5 class="modal-title fw-bold">
+                        <i class="fa-solid fa-sliders me-2"></i>Edit Inventory Thresholds
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <label class="form-label fw-600">Low Stock</label>
+                            <input type="number" class="form-control" name="low_stock" value="{{ $low_stock ?? 10 }}" min="0" required>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label fw-600">Good Stock</label>
+                            <input type="number" class="form-control" name="good_stock" value="{{ $good_stock ?? 50 }}" min="0" required>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <label class="form-label fw-600">Overstock</label>
+                            <input type="number" class="form-control" name="overstock" value="{{ $overstock ?? 100 }}" min="0" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-4 rounded-3 shadow-sm">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Button to trigger modal (place where appropriate) -->
+<button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#editThresholdsModal">
+    <i class="fa-solid fa-sliders me-1"></i> Edit Thresholds
+</button>

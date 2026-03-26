@@ -99,6 +99,9 @@ Route::middleware(['auth', 'is_staff'])->prefix('staff')->name('staff.')->group(
     Route::post('/pos/process', [App\Http\Controllers\StaffController::class, 'processSale'])->name('pos.process');
     Route::post('/check-stock', [App\Http\Controllers\StaffController::class, 'checkStock'])->name('check_stock');
     Route::post('/report-issue', [App\Http\Controllers\StaffController::class, 'reportIssue'])->name('report_issue');
+
+    // Add route for updating inventory thresholds
+    Route::post('/thresholds/update', [App\Http\Controllers\StaffController::class, 'updateThresholds'])->name('thresholds.update');
 });
 
 // Deployment Utilities - Run once then remove or secure

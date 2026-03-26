@@ -91,16 +91,7 @@
                             @enderror
                         </div>
 
-                        <div class="login-form-meta">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="remember" id="remember" {{ old('remember') ? 'checked' : '' }}>
-                                <label class="form-check-label" for="remember">Remember me</label>
-                            </div>
-
-                            @if (Route::has('password.request'))
-                                <a class="forgot-link" href="{{ route('password.request') }}">Forgot password?</a>
-                            @endif
-                        </div>
+                        <!-- login-form-meta removed as per request -->
 
                         <button type="submit" class="btn btn-primary-custom shadow-sm">
                             <i class="fa-solid fa-arrow-right-to-bracket me-2"></i>

@@ -305,7 +305,7 @@ class StaffController extends Controller
             }
         }
 
-        $products = $query->paginate(20)->withQueryString();
+        $products = $query->paginate(20);
         $categories = \App\Models\Category::where('admin_id', $this->getAdminId())->orderBy('name')->get();
         $brands = \App\Models\Brand::where('admin_id', $this->getAdminId())->orderBy('name')->get();
 
@@ -605,5 +605,28 @@ class StaffController extends Controller
             'returnedItems', 'stockOuts', 'damagedStocks', 'period',
             'totalReturned', 'totalStockOut', 'totalDamaged', 'totalEntries'
         ));
+    }
+    /**
+     * Handle staff inventory threshold updates.
+     */
+    public function updateThresholds(Request $request)
+    {
+        $request->validate([
+            'low_stock' => 'required|integer|min:0',
+            'good_stock' => 'required|integer|min:0',
+            'overstock' => 'required|integer|min:0',
+        ]);
+
+        $adminId = $this->getAdminId();
+
+        // Update all products for this admin with new thresholds
+        \App\Models\Product::where('admin_id', $adminId)->update([
+            'low_stock_threshold' => $request->input('low_stock'),
+            'overstock_threshold' => $request->input('overstock'),
+        ]);
+
+        // Optionally, you can handle 'good_stock' if you have a field for it
+
+        return redirect()->back()->with('success', 'Inventory thresholds updated successfully.');
     }
 }
