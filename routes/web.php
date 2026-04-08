@@ -40,7 +40,7 @@ Route::get('/fix-storage', function () {
 });
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('landing');
 });
 
 Auth::routes();
@@ -97,6 +97,7 @@ Route::middleware(['auth', 'is_staff'])->prefix('staff')->name('staff.')->group(
 
     Route::get('/pos', [App\Http\Controllers\StaffController::class, 'pos'])->name('pos');
     Route::post('/pos/process', [App\Http\Controllers\StaffController::class, 'processSale'])->name('pos.process');
+    Route::get('/pos/refresh-stock', [App\Http\Controllers\StaffController::class, 'refreshStock'])->name('refresh_stock');
     Route::post('/check-stock', [App\Http\Controllers\StaffController::class, 'checkStock'])->name('check_stock');
     Route::post('/report-issue', [App\Http\Controllers\StaffController::class, 'reportIssue'])->name('report_issue');
 

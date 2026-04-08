@@ -16,6 +16,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('vendor/fontawesome/css/all.min.css') }}">
     
     <!-- PWA Manifest & Meta -->
@@ -32,6 +33,7 @@
             height: 100%;
             margin: 0;
             overflow-x: hidden;
+            font-family: 'Poppins', 'Nunito', sans-serif;
         }
     </style>
 </head>

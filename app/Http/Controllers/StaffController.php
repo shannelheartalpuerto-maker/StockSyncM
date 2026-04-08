@@ -429,7 +429,33 @@ class StaffController extends Controller
         }
     }
 
-    public function reportIssue(Request $request)
+    public function refreshStock(Request $request)
+    {
+            try {
+                $adminId = $this->getAdminId();
+                
+                // Get all products for this admin with their current stock levels
+                $products = Product::where('admin_id', $adminId)
+                    ->select('id', 'quantity', 'name')
+                    ->get();
+
+                Log::info('Stock refresh requested for admin: ' . $adminId . ', found ' . count($products) . ' products');
+
+                return response()->json([
+                    'success' => true,
+                    'products' => $products,
+                    'count' => count($products)
+                ]);
+            } catch (\Exception $e) {
+                Log::error('Stock refresh error: ' . $e->getMessage());
+                return response()->json([
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ], 500);
+            }
+    }
+
+        public function reportIssue(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',

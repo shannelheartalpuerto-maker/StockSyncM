@@ -579,3 +579,1821 @@ body {
         height: calc(3.45rem + 2px);
     }
 }
+
+/* =====================================================================
+   New Login Landing Layout
+   ===================================================================== */
+
+.login-shell {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 12% 10%, rgba(14, 165, 233, 0.15) 0, rgba(14, 165, 233, 0) 32%),
+        radial-gradient(circle at 88% 84%, rgba(37, 99, 235, 0.14) 0, rgba(37, 99, 235, 0) 28%),
+        linear-gradient(180deg, #f7fafc 0%, #eef4fb 100%);
+}
+
+.login-shell-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+    background-size: 72px 72px;
+    opacity: 0.24;
+    pointer-events: none;
+}
+
+.login-shell-wrap {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+.login-shell-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.login-brand-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    color: #0f172a;
+}
+
+.login-brand-mark {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #fff;
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.24);
+}
+
+.login-brand-copy {
+    display: flex;
+    flex-direction: column;
+}
+
+.login-brand-name {
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+}
+
+.login-brand-tag {
+    margin-top: 0.1rem;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.login-top-pill {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 0.7rem 1rem;
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    color: #0f172a;
+    font-size: 0.88rem;
+    font-weight: 700;
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+    backdrop-filter: blur(12px);
+}
+
+.login-grid {
+    min-height: calc(100vh - 100px);
+    align-items: stretch;
+}
+
+.login-hero-panel {
+    position: relative;
+    height: 100%;
+    border-radius: 34px;
+    overflow: hidden;
+    padding: clamp(1.75rem, 4vw, 4rem);
+    color: #f8fbff;
+    background:
+        linear-gradient(145deg, rgba(12, 24, 55, 0.92) 0%, rgba(10, 64, 122, 0.88) 56%, rgba(37, 99, 235, 0.82) 100%),
+        url('../images/log in cover.webp') center/cover no-repeat;
+    box-shadow: 0 28px 70px rgba(15, 23, 42, 0.16);
+}
+
+.hero-orb {
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+.hero-orb-a {
+    width: 240px;
+    height: 240px;
+    top: -70px;
+    right: -80px;
+    background: rgba(56, 189, 248, 0.16);
+}
+
+.hero-orb-b {
+    width: 180px;
+    height: 180px;
+    left: -40px;
+    bottom: -60px;
+    background: rgba(34, 211, 238, 0.12);
+}
+
+.hero-chip {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.hero-chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #7dd3fc;
+    box-shadow: 0 0 0 5px rgba(125, 211, 252, 0.18);
+}
+
+.hero-title {
+    position: relative;
+    z-index: 1;
+    margin: 1.2rem 0 0.85rem;
+    max-width: 560px;
+    font-size: clamp(2rem, 4vw, 4rem);
+    line-height: 0.98;
+    letter-spacing: -0.06em;
+    font-weight: 800;
+}
+
+.hero-text {
+    position: relative;
+    z-index: 1;
+    max-width: 560px;
+    margin: 0;
+    font-size: 1.03rem;
+    line-height: 1.7;
+    color: rgba(240, 249, 255, 0.9);
+}
+
+.hero-story-grid {
+    position: relative;
+    z-index: 1;
+    margin-top: 1.6rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: 0.9rem;
+}
+
+.hero-story-card {
+    padding: 1rem 1.05rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.hero-story-card-main h3 {
+    margin: 0.55rem 0 0;
+    font-size: 1.18rem;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    color: #fff;
+}
+
+.hero-story-card-main p,
+.hero-story-card-side p {
+    margin: 0.55rem 0 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: rgba(226, 232, 240, 0.9);
+}
+
+.hero-story-kicker {
+    color: #7dd3fc;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.hero-goal-row {
+    position: relative;
+    z-index: 1;
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.hero-goal-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.95rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #eff6ff;
+    background: rgba(15, 23, 42, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.hero-goal-pill i {
+    color: #7dd3fc;
+}
+
+.hero-points {
+    position: relative;
+    z-index: 1;
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
+.hero-point-card {
+    min-height: 132px;
+    padding: 1rem;
+    border-radius: 20px;
+    background: rgba(15, 23, 42, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+}
+
+.hero-point-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.85rem;
+    color: #e0f2fe;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.hero-point-title {
+    font-size: 0.95rem;
+    font-weight: 750;
+    color: #fff;
+    line-height: 1.25;
+}
+
+.hero-point-subtitle {
+    margin-top: 0.35rem;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: rgba(226, 232, 240, 0.86);
+}
+
+.login-card-shell {
+    width: 100%;
+    max-width: 500px;
+    margin-left: auto;
+    border-radius: 30px;
+    padding: clamp(1.4rem, 3vw, 2.35rem);
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    box-shadow: 0 28px 68px rgba(15, 23, 42, 0.14);
+    backdrop-filter: blur(16px);
+}
+
+.login-card-head {
+    margin-bottom: 1.25rem;
+}
+
+.login-card-kicker {
+    color: #0284c7;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.login-card-title {
+    margin: 0.45rem 0 0;
+    font-size: clamp(1.6rem, 2vw, 2.1rem);
+    line-height: 1.1;
+    letter-spacing: -0.05em;
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.login-card-copy {
+    margin: 0.55rem 0 0;
+    color: #64748b;
+    line-height: 1.65;
+    font-size: 0.95rem;
+}
+
+.login-card-form .form-floating > .form-control {
+    border-radius: 16px;
+    border: 1px solid #d7e0eb;
+    background: #fff;
+    height: calc(3.7rem + 2px);
+    padding: 1.1rem 1rem 0.45rem;
+    font-size: 0.98rem;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.login-card-form .form-floating > .form-control:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
+}
+
+.login-card-form .form-floating > label {
+    padding-left: 0.95rem;
+    color: #64748b;
+}
+
+.login-submit-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.98rem 1rem;
+    border: none;
+    border-radius: 16px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #4f46e5 100%);
+    box-shadow: 0 14px 26px rgba(37, 99, 235, 0.28);
+}
+
+.login-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 30px rgba(37, 99, 235, 0.32);
+}
+
+.login-card-footnote {
+    color: #64748b;
+}
+
+.login-card-footnote a {
+    color: #1d4ed8;
+}
+
+/* =====================================================================
+   Landing Page Layout
+   ===================================================================== */
+
+.landing-shell {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 12% 10%, rgba(14, 165, 233, 0.15) 0, rgba(14, 165, 233, 0) 32%),
+        radial-gradient(circle at 88% 84%, rgba(37, 99, 235, 0.14) 0, rgba(37, 99, 235, 0) 28%),
+        linear-gradient(180deg, #f7fafc 0%, #eef4fb 100%);
+}
+
+.landing-shell-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+    background-size: 72px 72px;
+    opacity: 0.22;
+    pointer-events: none;
+}
+
+.landing-shell-wrap {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+.landing-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.65rem;
+}
+
+.landing-brand-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.9rem;
+    color: #0f172a;
+}
+
+.landing-brand-mark {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: #fff;
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    box-shadow: 0 12px 28px rgba(37, 99, 235, 0.24);
+}
+
+.landing-brand-copy {
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-brand-name {
+    font-size: 1.55rem;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
+}
+
+.landing-brand-tag {
+    margin-top: 0.1rem;
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.landing-link-btn {
+    padding: 0.8rem 1rem;
+    border-radius: 999px;
+    color: #0f172a;
+    font-weight: 700;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.76);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+}
+
+.landing-cta-btn,
+.landing-cta-wide {
+    border: none;
+    border-radius: 999px;
+    padding: 0.85rem 1.25rem;
+    font-weight: 800;
+}
+
+.landing-auth-btn {
+    height: 48px;
+    min-width: 170px;
+    border-radius: 999px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.3rem;
+    text-align: center;
+    color: #fff !important;
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #4f46e5 100%);
+    border: none;
+    box-shadow: 0 14px 26px rgba(37, 99, 235, 0.22);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.landing-auth-btn-primary {
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #4f46e5 100%);
+}
+
+.landing-auth-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 30px rgba(37, 99, 235, 0.28);
+    color: #fff;
+}
+
+.landing-auth-btn:focus,
+.landing-auth-btn:active {
+    color: #fff;
+    box-shadow: 0 14px 26px rgba(37, 99, 235, 0.22);
+}
+
+.landing-grid {
+    min-height: auto;
+    margin-top: 0.7rem;
+}
+
+.landing-hero-intro {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border-radius: 24px;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.62) 100%);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.07);
+    backdrop-filter: blur(16px);
+}
+
+.landing-hero-intro-copy {
+    max-width: 820px;
+}
+
+.landing-hero-intro .landing-title {
+    margin-top: 0.75rem;
+    margin-bottom: 0.65rem;
+    color: #0f172a;
+    max-width: 900px;
+}
+
+.landing-hero-intro .landing-text {
+    color: #475569;
+    max-width: 860px;
+}
+
+.landing-chip-light {
+    background: rgba(14, 165, 233, 0.1);
+    border-color: rgba(14, 165, 233, 0.16);
+    color: #0f172a;
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 800;
+}
+
+.landing-chip-light .landing-chip-dot {
+    background: #0ea5e9;
+    box-shadow: 0 0 0 5px rgba(14, 165, 233, 0.16);
+}
+
+.landing-hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    min-width: 210px;
+    align-self: stretch;
+    justify-content: center;
+}
+
+.landing-hero-actions .landing-auth-btn,
+.landing-card-actions .landing-auth-btn {
+    width: 100%;
+    text-align: center;
+}
+
+.landing-hero-panel {
+    position: relative;
+    height: 100%;
+    border-radius: 28px;
+    overflow: hidden;
+    padding: clamp(1.4rem, 3vw, 2.4rem);
+    color: #f8fbff;
+    background:
+        linear-gradient(145deg, rgba(12, 24, 55, 0.92) 0%, rgba(10, 64, 122, 0.88) 56%, rgba(37, 99, 235, 0.82) 100%),
+        url('../images/log in cover.webp') center/cover no-repeat;
+    box-shadow: 0 20px 48px rgba(15, 23, 42, 0.14);
+}
+
+.landing-orb {
+    position: absolute;
+    border-radius: 999px;
+    pointer-events: none;
+}
+
+.landing-orb-a {
+    width: 240px;
+    height: 240px;
+    top: -70px;
+    right: -80px;
+    background: rgba(56, 189, 248, 0.16);
+}
+
+.landing-orb-b {
+    width: 180px;
+    height: 180px;
+    left: -40px;
+    bottom: -60px;
+    background: rgba(34, 211, 238, 0.12);
+}
+
+.landing-chip {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+.landing-chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #7dd3fc;
+    box-shadow: 0 0 0 5px rgba(125, 211, 252, 0.18);
+}
+
+.landing-title {
+    position: relative;
+    z-index: 1;
+    margin: 1.2rem 0 0.85rem;
+    max-width: 620px;
+    font-size: clamp(2rem, 4vw, 4rem);
+    line-height: 0.98;
+    letter-spacing: -0.06em;
+    font-weight: 800;
+}
+
+.landing-text {
+    position: relative;
+    z-index: 1;
+    max-width: 600px;
+    margin: 0;
+    font-size: 1.03rem;
+    line-height: 1.7;
+    color: rgba(240, 249, 255, 0.9);
+}
+
+.landing-intro-grid {
+    position: relative;
+    z-index: 1;
+    margin-top: 1.25rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: 0.9rem;
+}
+
+.landing-intro-card {
+    padding: 1rem 1.05rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.landing-intro-main h3 {
+    margin: 0.55rem 0 0;
+    font-size: 1.18rem;
+    line-height: 1.2;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    color: #fff;
+}
+
+.landing-intro-card p,
+.landing-intro-card li {
+    margin: 0.55rem 0 0;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: rgba(226, 232, 240, 0.9);
+}
+
+.landing-intro-card ul {
+    margin: 0.5rem 0 0;
+    padding-left: 1rem;
+}
+
+.landing-intro-kicker {
+    color: #7dd3fc;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.landing-goal-row {
+    position: relative;
+    z-index: 1;
+    margin-top: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.landing-goal-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.95rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #eff6ff;
+    background: rgba(15, 23, 42, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.landing-goal-pill i {
+    color: #7dd3fc;
+}
+
+.landing-side-card {
+    width: 100%;
+    max-width: 500px;
+    margin-left: auto;
+    border-radius: 24px;
+    padding: clamp(1.15rem, 2.4vw, 1.8rem);
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    box-shadow: 0 18px 42px rgba(15, 23, 42, 0.1);
+    backdrop-filter: blur(16px);
+}
+
+.landing-side-head {
+    margin-bottom: 0.9rem;
+}
+
+.landing-side-kicker {
+    color: #0284c7;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.landing-side-title {
+    margin: 0.45rem 0 0;
+    font-size: clamp(1.6rem, 2vw, 2.1rem);
+    line-height: 1.1;
+    letter-spacing: -0.05em;
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.landing-side-copy {
+    margin: 0.55rem 0 0;
+    color: #64748b;
+    line-height: 1.65;
+    font-size: 0.95rem;
+}
+
+.landing-info-list {
+    display: grid;
+    gap: 0.72rem;
+}
+
+.landing-info-item {
+    display: flex;
+    gap: 0.9rem;
+    align-items: flex-start;
+    padding: 0.82rem;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #f8fbff 0%, #f4f8fd 100%);
+    border: 1px solid #e2e8f0;
+}
+
+.landing-info-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0ea5e9;
+    background: rgba(14, 165, 233, 0.1);
+    flex: 0 0 auto;
+}
+
+.landing-info-title {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.landing-info-text {
+    margin-top: 0.22rem;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: #64748b;
+}
+
+@media (max-width: 1199.98px) {
+    .landing-topbar {
+        margin-bottom: 1.25rem;
+    }
+
+    .landing-intro-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .landing-side-card {
+        max-width: 100%;
+    }
+}
+
+/* =====================================================================
+   NEW SCROLLABLE LANDING PAGE DESIGN
+   ===================================================================== */
+
+.landing-page-container {
+    min-height: 100vh;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+/* Hero Section */
+.landing-hero-section {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at 50% 35%, rgba(14, 165, 233, 0.14) 0, rgba(14, 165, 233, 0) 42%),
+        linear-gradient(180deg, #f7fafc 0%, #eef4fb 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(2rem, 4vw, 4rem) 1rem;
+}
+
+.landing-hero-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.25) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.22) 1px, transparent 1px);
+    background-size: 72px 72px;
+    opacity: 0.22;
+    pointer-events: none;
+}
+
+.landing-hero-wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1100px;
+    padding: 0 1rem;
+}
+
+.landing-hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    align-items: center;
+}
+
+.landing-hero-content {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(8px);
+}
+
+.landing-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.05);
+    border: 1px solid rgba(14, 165, 233, 0.2);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #0284c7;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+.landing-hero-badge i {
+    color: #0284c7;
+}
+
+.landing-hero-title {
+    margin: 0;
+    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.06em;
+    color: #0f172a;
+    margin-bottom: 1rem;
+}
+
+.landing-hero-description {
+    margin: 0 0 1.5rem;
+    font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+    line-height: 1.7;
+    color: #475569;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.landing-hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    justify-content: center;
+}
+
+.landing-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.95rem 2rem;
+    min-width: 172px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: none;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    color: #fff;
+    box-shadow: 0 10px 28px rgba(37, 99, 235, 0.25);
+}
+
+.landing-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 34px rgba(37, 99, 235, 0.32);
+    color: #fff;
+    text-decoration: none;
+}
+
+.landing-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.95rem 2rem;
+    min-width: 172px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: 2px solid #d7e0eb;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    cursor: pointer;
+    background: #fff;
+    color: #0f172a;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+}
+
+.landing-btn-secondary:hover {
+    border-color: #0ea5e9;
+    color: #0ea5e9;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.15);
+    text-decoration: none;
+}
+
+/* Features Section */
+.landing-features-section {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 6rem) 1rem;
+    background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+}
+
+.landing-section-header {
+    text-align: center;
+    margin-bottom: clamp(2rem, 4vw, 3.5rem);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.landing-section-title {
+    margin: 0 0 0.8rem;
+    font-size: clamp(1.8rem, 3vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: #0f172a;
+}
+
+.landing-section-description {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #64748b;
+}
+
+.landing-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.landing-feature-card {
+    padding: 2rem;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.landing-feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+    border-color: #0ea5e9;
+}
+
+.landing-feature-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    color: #0284c7;
+    margin-bottom: 1rem;
+}
+
+.landing-feature-title {
+    margin: 0 0 0.8rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.landing-feature-description {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+/* Benefits Section */
+.landing-benefits-section {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 6rem) 1rem;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    color: #fff;
+}
+
+.landing-benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.landing-benefit-card {
+    padding: 2rem;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.landing-benefit-card:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.landing-benefit-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #7dd3fc;
+    margin-bottom: 0.5rem;
+}
+
+.landing-benefit-title {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.landing-benefit-description {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: rgba(226, 232, 240, 0.85);
+}
+
+/* How It Works Section */
+.landing-works-section {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 6rem) 1rem;
+    background: #fff;
+}
+
+.landing-works-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.landing-step-card {
+    position: relative;
+    padding: 2.5rem 1.5rem 1.5rem;
+    text-align: center;
+}
+
+.landing-step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1rem;
+}
+
+.landing-step-title {
+    margin: 0 0 0.8rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.landing-step-description {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #64748b;
+}
+
+.landing-step-card::after {
+    content: '→';
+    position: absolute;
+    right: -30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    color: #cbd5e1;
+    font-weight: 300;
+}
+
+.landing-step-card:last-child::after {
+    display: none;
+}
+
+/* CTA Section */
+.landing-cta-section {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(4rem, 8vw, 6rem) 1rem;
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(37, 99, 235, 0.1) 100%);
+    border-top: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+.landing-cta-box {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.landing-cta-box h2 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.landing-cta-box p {
+    margin: 0 0 2rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #475569;
+}
+
+.landing-cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .landing-hero-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .landing-hero-section {
+        min-height: auto;
+        padding: 3rem 1rem;
+    }
+
+    .landing-hero-content {
+        padding: 1.2rem;
+        border-radius: 18px;
+    }
+
+    .landing-works-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .landing-step-card::after {
+        display: none;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .landing-hero-section {
+        padding: 2rem 0.75rem;
+    }
+
+    .landing-hero-content {
+        padding: 1rem;
+        border-radius: 16px;
+    }
+
+    .landing-hero-badge {
+        font-size: 0.72rem;
+        padding: 0.38rem 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .landing-hero-title {
+        font-size: clamp(1.7rem, 8vw, 2.1rem);
+        line-height: 1.14;
+        margin-bottom: 0.8rem;
+    }
+
+    .landing-hero-description {
+        font-size: 0.96rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    .landing-hero-actions {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.65rem;
+        margin-bottom: 1rem;
+    }
+
+    .landing-btn-primary,
+    .landing-btn-secondary {
+        width: auto;
+        min-width: 170px;
+        max-width: 230px;
+        padding: 0.78rem 1.2rem;
+        font-size: 0.92rem;
+        justify-content: center;
+    }
+
+    .landing-section-title {
+        font-size: 1.6rem;
+    }
+
+    .landing-features-section,
+    .landing-benefits-section,
+    .landing-works-section,
+    .landing-cta-section {
+        padding: 3rem 0.85rem;
+    }
+
+    .landing-features-grid {
+        gap: 1rem;
+    }
+
+    .landing-feature-card {
+        padding: 1.1rem;
+        border-radius: 16px;
+    }
+
+    .landing-benefit-card,
+    .landing-step-card {
+        padding: 1.1rem;
+    }
+
+    .landing-cta-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.65rem;
+    }
+
+    .landing-cta-buttons .landing-btn-primary,
+    .landing-cta-buttons .landing-btn-secondary {
+        width: auto;
+        min-width: 185px;
+        max-width: 240px;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .landing-shell-wrap {
+        min-height: auto;
+    }
+
+    .landing-topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .landing-grid {
+        min-height: auto;
+    }
+
+    .landing-hero-intro {
+        padding: 1rem;
+    }
+
+    .landing-hero-panel {
+        border-radius: 28px;
+        padding: 1.25rem;
+    }
+
+    .landing-side-card {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .landing-shell {
+        background:
+            radial-gradient(circle at 12% 6%, rgba(14, 165, 233, 0.17) 0, rgba(14, 165, 233, 0) 36%),
+            linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
+    }
+
+    .landing-shell-wrap {
+        padding-top: 0.9rem;
+        padding-bottom: 1rem;
+    }
+
+    .landing-brand-mark {
+        width: 50px;
+        height: 50px;
+        border-radius: 16px;
+    }
+
+    .landing-brand-name {
+        font-size: 1.28rem;
+    }
+
+    .landing-hero-intro {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .landing-hero-actions {
+        width: 100%;
+        min-width: 0;
+        flex-direction: column;
+    }
+
+    .landing-auth-btn {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .landing-hero-panel {
+        border-radius: 24px;
+        padding: 1.25rem;
+    }
+
+    .landing-hero-intro {
+        border-radius: 22px;
+        padding: 0.95rem;
+        gap: 0.9rem;
+    }
+
+    .landing-hero-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .landing-hero-actions .landing-cta-btn,
+    .landing-hero-actions .landing-link-btn {
+        width: 100%;
+    }
+
+    .landing-chip {
+        font-size: 0.72rem;
+        padding: 0.42rem 0.75rem;
+    }
+
+    .landing-title {
+        margin-top: 1rem;
+        font-size: 2rem;
+        line-height: 1.02;
+    }
+
+    .landing-text {
+        font-size: 0.92rem;
+        line-height: 1.6;
+    }
+
+    .landing-intro-grid {
+        margin-top: 1.1rem;
+        gap: 0.7rem;
+    }
+
+    .landing-intro-card {
+        padding: 0.9rem;
+        border-radius: 16px;
+    }
+
+    .landing-intro-main h3 {
+        font-size: 1.05rem;
+    }
+
+    .landing-intro-card p,
+    .landing-intro-card li {
+        font-size: 0.82rem;
+    }
+
+    .landing-goal-row {
+        margin-top: 0.85rem;
+        gap: 0.5rem;
+    }
+
+    .landing-goal-pill {
+        padding: 0.62rem 0.82rem;
+        font-size: 0.76rem;
+    }
+
+    .landing-side-card {
+        border-radius: 24px;
+        padding: 1.15rem;
+    }
+
+    .landing-side-title {
+        font-size: 1.5rem;
+    }
+
+    .landing-side-copy {
+        font-size: 0.9rem;
+    }
+
+    .landing-info-item {
+        padding: 0.85rem;
+        border-radius: 16px;
+    }
+
+    .landing-info-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 13px;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .login-shell-top {
+        margin-bottom: 1.25rem;
+    }
+
+    .hero-points {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-story-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .login-card-shell {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .login-shell-wrap {
+        min-height: auto;
+    }
+
+    .login-shell-top {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .login-grid {
+        min-height: auto;
+    }
+
+    .login-hero-panel {
+        border-radius: 28px;
+        padding: 1.5rem;
+    }
+
+    .login-card-shell {
+        margin-left: 0;
+    }
+}
+
+/* =====================================================================
+   Simple Auth Pages (Login/Register)
+   ===================================================================== */
+
+.auth-clean-shell {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    background:
+        radial-gradient(circle at 12% 10%, rgba(14, 165, 233, 0.14) 0, rgba(14, 165, 233, 0) 35%),
+        radial-gradient(circle at 88% 84%, rgba(37, 99, 235, 0.12) 0, rgba(37, 99, 235, 0) 30%),
+        linear-gradient(180deg, #f7fafc 0%, #eef4fb 100%);
+}
+
+.auth-clean-wrap {
+    width: 100%;
+    max-width: 520px;
+}
+
+.auth-clean-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    color: #0f172a;
+}
+
+.auth-clean-brand-mark {
+    width: 50px;
+    height: 50px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #fff;
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
+}
+
+.auth-clean-brand-copy {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-clean-brand-name {
+    font-size: 1.7rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.auth-clean-brand-tag {
+    margin-top: 0.15rem;
+    font-size: 0.82rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.auth-clean-card {
+    border-radius: 26px;
+    padding: 1.4rem;
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 24px 56px rgba(15, 23, 42, 0.12);
+    backdrop-filter: blur(12px);
+}
+
+.auth-clean-head {
+    margin-bottom: 1.05rem;
+}
+
+.auth-clean-kicker {
+    color: #0284c7;
+    font-size: 0.76rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.auth-clean-title {
+    margin: 0.38rem 0 0;
+    font-size: clamp(1.6rem, 2.2vw, 2rem);
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.auth-clean-subtitle {
+    margin: 0.5rem 0 0;
+    color: #64748b;
+    font-size: 0.94rem;
+    line-height: 1.55;
+}
+
+.auth-clean-form .form-floating > .form-control {
+    border-radius: 14px;
+    border: 1px solid #d7e0eb;
+    background: #fff;
+    height: calc(3.55rem + 2px);
+    padding: 1.05rem 0.95rem 0.4rem;
+    font-size: 0.95rem;
+}
+
+.auth-clean-form .form-floating > .form-control:focus {
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.12);
+}
+
+.auth-clean-form .form-floating > label {
+    padding-left: 0.95rem;
+    color: #64748b;
+}
+
+.auth-clean-submit {
+    width: 100%;
+    margin-top: 0.55rem;
+    padding: 0.94rem 1rem;
+    border: none;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 0.98rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #4f46e5 100%);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+}
+
+.auth-clean-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 28px rgba(37, 99, 235, 0.28);
+}
+
+.auth-clean-footnote {
+    color: #64748b;
+}
+
+.auth-clean-footnote a {
+    color: #1d4ed8;
+}
+
+@media (max-width: 767.98px) {
+    .auth-clean-shell {
+        padding: 0.9rem;
+    }
+
+    .auth-clean-wrap {
+        max-width: 100%;
+    }
+
+    .auth-clean-brand {
+        margin-bottom: 0.75rem;
+    }
+
+    .auth-clean-brand-mark {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+    }
+
+    .auth-clean-brand-name {
+        font-size: 1.45rem;
+    }
+
+    .auth-clean-card {
+        border-radius: 20px;
+        padding: 1.05rem;
+    }
+
+    .auth-clean-title {
+        font-size: 1.45rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .login-shell {
+        background:
+            radial-gradient(circle at 12% 6%, rgba(14, 165, 233, 0.17) 0, rgba(14, 165, 233, 0) 36%),
+            linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
+    }
+
+    .login-shell-wrap {
+        padding-top: 0.9rem;
+        padding-bottom: 1rem;
+    }
+
+    .login-brand-mark {
+        width: 50px;
+        height: 50px;
+        border-radius: 16px;
+    }
+
+    .login-brand-name {
+        font-size: 1.28rem;
+    }
+
+    .login-top-pill {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .login-hero-panel {
+        border-radius: 24px;
+        padding: 1.25rem;
+    }
+
+    .hero-chip {
+        font-size: 0.72rem;
+        padding: 0.42rem 0.75rem;
+    }
+
+    .hero-title {
+        margin-top: 1rem;
+        font-size: 2rem;
+        line-height: 1.02;
+    }
+
+    .hero-text {
+        font-size: 0.92rem;
+        line-height: 1.6;
+    }
+
+    .hero-story-grid {
+        margin-top: 1.1rem;
+        gap: 0.7rem;
+    }
+
+    .hero-story-card {
+        padding: 0.9rem;
+        border-radius: 16px;
+    }
+
+    .hero-story-card-main h3 {
+        font-size: 1.05rem;
+    }
+
+    .hero-story-card-main p,
+    .hero-story-card-side p {
+        font-size: 0.82rem;
+    }
+
+    .hero-goal-row {
+        margin-top: 0.85rem;
+        gap: 0.5rem;
+    }
+
+    .hero-goal-pill {
+        padding: 0.62rem 0.82rem;
+        font-size: 0.76rem;
+    }
+
+    .hero-points {
+        margin-top: 1.15rem;
+    }
+
+    .hero-point-card {
+        min-height: auto;
+        padding: 0.9rem;
+        border-radius: 16px;
+    }
+
+    .login-card-shell {
+        border-radius: 24px;
+        padding: 1.15rem;
+    }
+
+    .login-card-title {
+        font-size: 1.5rem;
+    }
+
+    .login-card-copy {
+        font-size: 0.9rem;
+    }
+
+    .login-card-form .form-floating > .form-control {
+        height: calc(3.45rem + 2px);
+        border-radius: 14px;
+        font-size: 0.95rem;
+    }
+
+    .login-submit-btn {
+        padding: 0.9rem 1rem;
+        border-radius: 14px;
+    }
+}
+

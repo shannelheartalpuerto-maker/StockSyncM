@@ -23,6 +23,9 @@
             <div class="inv-header-actions">
                 <span class="inv-head-pill"><i class="fa-solid fa-box"></i>{{ number_format($products->count()) }} Products</span>
                 <span class="inv-head-pill"><i class="fa-solid fa-tags"></i>{{ isset($categories) ? number_format($categories->count()) : '0' }} Categories</span>
+                <button type="button" id="openScannerBtn" class="btn btn-light btn-sm rounded-pill fw-semibold px-3 py-2 scanner-open-btn">
+                    <i class="fa-solid fa-barcode me-1"></i> Scan Product
+                </button>
             </div>
         </div>
     </div>
@@ -73,6 +76,8 @@
                         <div class="col-md-4 col-xl-3 product-item" 
                              data-id="{{ $product->id }}"
                              data-name="{{ strtolower($product->name) }}" 
+                                data-display-name="{{ $product->name }}"
+                                data-price="{{ $product->price }}"
                              data-code="{{ $product->code }}" 
                              data-category-id="{{ $product->category_id }}" 
                              data-brand-id="{{ $product->brand_id }}"
@@ -143,6 +148,31 @@
                     <button class="btn btn-primary w-100 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2" onclick="processSale()">
                         <i class="fa-solid fa-check-circle"></i> COMPLETE SALE
                     </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scanner Modal -->
+<div class="modal fade" id="scannerModal" data-bs-backdrop="false" data-bs-keyboard="true" tabindex="-1" aria-labelledby="scannerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="scannerModalLabel"><i class="fa-solid fa-barcode me-2"></i>Scan Product Barcode</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="position-relative bg-dark rounded overflow-hidden">
+                        <div id="scannerRegion" class="scanner-region"></div>
+                </div>
+                <div class="mt-3">
+                        <p class="text-muted small mb-2" id="scannerStatus">Initializing camera...</p>
+                </div>
+                <div class="input-group mt-2">
+                        <span class="input-group-text"><i class="fa-solid fa-keyboard"></i></span>
+                        <input type="text" id="manualBarcodeInput" class="form-control" placeholder="Enter barcode manually">
+                        <button class="btn btn-outline-primary" type="button" id="manualScanBtn">Add by Code</button>
                 </div>
             </div>
         </div>
@@ -264,6 +294,38 @@
         font-weight: 650;
         white-space: nowrap;
     }
+    .scanner-open-btn {
+        border: 1px solid rgba(255,255,255,.5);
+        background: rgba(255,255,255,.95);
+        color: #0f172a;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .scanner-open-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(2, 6, 23, .16);
+        color: #0f172a;
+    }
+    .scanner-region {
+        width: 100%;
+        height: 300px;
+        background: #000;
+        overflow: hidden;
+    }
+    #scannerRegion {
+        border: 0 !important;
+    }
+    #scannerRegion__scan_region {
+        background: #000;
+        min-height: 300px;
+    }
+    #scannerRegion__scan_region video {
+        width: 100% !important;
+        height: 300px !important;
+        object-fit: cover !important;
+    }
+    #scannerRegion__dashboard {
+        display: none !important;
+    }
     :root {
         --pos-card-bg: #fff;
         --pos-primary: #4f46e5;
@@ -328,15 +390,23 @@
 
     .stock-pill {
         position: absolute;
-        top: 4px;
-        right: 4px;
-        background: rgba(255, 255, 255, 0.9);
-        color: var(--pos-text);
-        font-size: 0.65rem;
+        top: 8px;
+        right: 8px;
+        background: rgba(15, 23, 42, 0.88);
+        color: #fff;
+        font-size: 0.78rem;
         font-weight: 700;
-        padding: 1px 6px;
-        border-radius: 4px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        line-height: 1;
+        min-width: 28px;
+        height: 22px;
+        padding: 0 7px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        z-index: 2;
     }
 
     .pos-product-info .name {
@@ -449,12 +519,7 @@
         animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
 
-    /* Keep success modal above backdrop on all devices */
-    .modal-backdrop.show {
-        z-index: 2000 !important;
-        opacity: 0 !important;
-        background: transparent !important;
-    }
+    /* Keep success modal above normal content without changing global backdrops */
 
     #saleSuccessModal {
         z-index: 2100 !important;
@@ -484,14 +549,114 @@
     ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 </style>
 
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script>
     let cart = [];
+    let scannerInstance = null;
+    let scannerIsRunning = false;
+    let lastScannedCode = '';
+    let lastScannedAt = 0;
+
+    function setScannerStatus(message, isError = false) {
+        const statusEl = document.getElementById('scannerStatus');
+        if (!statusEl) return;
+        statusEl.innerText = message;
+        statusEl.className = isError ? 'small mt-2 text-danger fw-semibold' : 'small mt-2 text-success fw-semibold';
+    }
+
+    function findProductByCode(scannedCode) {
+        const normalized = String(scannedCode || '').trim().toLowerCase();
+        if (!normalized) return null;
+
+        return Array.from(document.querySelectorAll('.product-item')).find(item => {
+            const productCode = String(item.getAttribute('data-code') || '').trim().toLowerCase();
+            return productCode === normalized;
+        }) || null;
+    }
+
+    function addScannedProductToCart(scannedCode) {
+        const product = findProductByCode(scannedCode);
+        if (!product) {
+            setScannerStatus('No product found for code: ' + scannedCode, true);
+            showError('No product found for barcode: ' + scannedCode);
+            return;
+        }
+
+        const id = parseInt(product.getAttribute('data-id'), 10);
+        const name = product.getAttribute('data-display-name') || product.getAttribute('data-name') || 'Product';
+        const price = parseFloat(product.getAttribute('data-price')) || 0;
+        const maxQty = parseInt(product.getAttribute('data-stock'), 10) || 0;
+
+        if (maxQty <= 0) {
+            setScannerStatus(name + ' is out of stock.', true);
+            showError(name + ' is out of stock.');
+            return;
+        }
+
+        addToCart(id, name, price, maxQty);
+        setScannerStatus('Added to cart: ' + name + ' (' + scannedCode + ')');
+    }
+
+    async function stopScanner() {
+        if (!scannerInstance || !scannerIsRunning) return;
+        try {
+            await scannerInstance.stop();
+            await scannerInstance.clear();
+        } catch (err) {
+            console.warn('Scanner stop warning:', err);
+        } finally {
+            scannerIsRunning = false;
+        }
+    }
+
+    async function startScanner() {
+        if (scannerIsRunning) return;
+        if (typeof Html5Qrcode === 'undefined') {
+            setScannerStatus('Scanner library failed to load. Please refresh the page.', true);
+            return;
+        }
+
+        const regionId = 'scannerRegion';
+        scannerInstance = new Html5Qrcode(regionId);
+        setScannerStatus('Starting camera...');
+
+        try {
+            await scannerInstance.start(
+                { facingMode: 'environment' },
+                { fps: 10, qrbox: { width: 280, height: 140 } },
+                (decodedText) => {
+                    const now = Date.now();
+                    const normalizedCode = String(decodedText || '').trim();
+
+                    // Prevent duplicate reads firing several times per second.
+                    if (!normalizedCode) return;
+                    if (normalizedCode === lastScannedCode && now - lastScannedAt < 1200) return;
+
+                    lastScannedCode = normalizedCode;
+                    lastScannedAt = now;
+                    addScannedProductToCart(normalizedCode);
+                },
+                () => {}
+            );
+            scannerIsRunning = true;
+            setScannerStatus('Scanner active. Ready to scan.');
+        } catch (err) {
+            console.error('Scanner start failed:', err);
+            setScannerStatus('Unable to access camera. Check camera permissions.', true);
+        }
+    }
 
     function cleanupModalArtifacts() {
         document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
         document.body.classList.remove('modal-open');
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
+    }
+
+    function cleanupModalArtifactsIfNoModalOpen() {
+        if (!document.querySelector('.modal.show')) {
+            cleanupModalArtifacts();
+        }
     }
 
     function normalizeSuccessBackdrop() {
@@ -541,10 +706,65 @@
             cleanupModalArtifacts();
         }
 
+        // Global guard: whenever any modal closes, ensure stale backdrops are removed.
+        document.addEventListener('hidden.bs.modal', function() {
+            setTimeout(cleanupModalArtifactsIfNoModalOpen, 20);
+        });
+
+        // Guard for browser tab/page restores.
+        window.addEventListener('pageshow', cleanupModalArtifactsIfNoModalOpen);
+        window.addEventListener('focus', cleanupModalArtifactsIfNoModalOpen);
+
         const saleSuccessModalEl = document.getElementById('saleSuccessModal');
         const saleSuccessModal = bootstrap.Modal.getOrCreateInstance(saleSuccessModalEl);
+        const scannerModalEl = document.getElementById('scannerModal');
+        const scannerModal = bootstrap.Modal.getOrCreateInstance(scannerModalEl);
+        const openScannerBtn = document.getElementById('openScannerBtn');
+        const manualScanBtn = document.getElementById('manualScanBtn');
+        const manualBarcodeInput = document.getElementById('manualBarcodeInput');
         const printBtn = document.getElementById('printReceiptBtn');
         const newOrderBtn = document.getElementById('newOrderBtn');
+
+        if (openScannerBtn) {
+            openScannerBtn.addEventListener('click', function() {
+                scannerModal.show();
+            });
+        }
+
+        if (scannerModalEl) {
+            scannerModalEl.addEventListener('shown.bs.modal', function() {
+                startScanner();
+                if (manualBarcodeInput) manualBarcodeInput.focus();
+            });
+
+            scannerModalEl.addEventListener('hidden.bs.modal', function() {
+                stopScanner();
+                if (manualBarcodeInput) manualBarcodeInput.value = '';
+                setScannerStatus('Scanner is ready.');
+                setTimeout(cleanupModalArtifactsIfNoModalOpen, 20);
+            });
+        }
+
+        if (manualScanBtn) {
+            manualScanBtn.addEventListener('click', function() {
+                const code = manualBarcodeInput ? manualBarcodeInput.value.trim() : '';
+                if (!code) return;
+                addScannedProductToCart(code);
+                manualBarcodeInput.value = '';
+                manualBarcodeInput.focus();
+            });
+        }
+
+        if (manualBarcodeInput) {
+            manualBarcodeInput.addEventListener('keydown', function(event) {
+                if (event.key !== 'Enter') return;
+                event.preventDefault();
+                const code = manualBarcodeInput.value.trim();
+                if (!code) return;
+                addScannedProductToCart(code);
+                manualBarcodeInput.value = '';
+            });
+        }
 
         saleSuccessModalEl.addEventListener('hidden.bs.modal', function() {
             // Delay avoids racing with bootstrap hide transition.
@@ -568,6 +788,7 @@
                 document.getElementById('paymentReceived').value = '';
                 renderCart();
                 cleanupModalArtifacts();
+                console.log('New order started - cart cleared');
             });
         }
     });
@@ -673,6 +894,66 @@
 
     document.getElementById('paymentReceived').addEventListener('input', calculateChange);
 
+    function refreshProductStock() {
+        // Fetch updated stock quantities from server
+        console.log('Starting stock refresh...');
+        console.log('Route URL: {{ route("staff.refresh_stock") }}');
+        
+        $.ajax({
+            url: '{{ route("staff.refresh_stock") }}',
+            method: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                console.log('Stock refresh response received:', response);
+                
+                if (response && response.products && Array.isArray(response.products)) {
+                    let updatedCount = 0;
+                    // Update data-stock attributes and directly update display
+                    response.products.forEach(product => {
+                        const productItem = document.querySelector(`.product-item[data-id="${product.id}"]`);
+                        const display = document.getElementById('stock-display-' + product.id);
+                        const card = document.getElementById('product-card-' + product.id);
+                        
+                        if (productItem && display && card) {
+                            // Update the data attribute
+                            productItem.setAttribute('data-stock', product.quantity);
+                            
+                            // Directly update the display
+                            display.innerText = product.quantity;
+                            
+                            // Update card stock styling
+                            if (product.quantity <= 0) {
+                                card.classList.add('out-of-stock');
+                                display.classList.remove('bg-danger', 'text-white');
+                                display.classList.add('bg-danger', 'text-white');
+                            } else {
+                                card.classList.remove('out-of-stock');
+                                display.classList.remove('bg-danger', 'text-white');
+                            }
+                            updatedCount++;
+                        }
+                    });
+                    console.log('Stock updated for ' + updatedCount + ' products');
+                } else {
+                    console.warn('Invalid response format:', response);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Stock refresh AJAX error:', {
+                    status: status,
+                    error: error,
+                    statusCode: xhr.status,
+                    responseText: xhr.responseText
+                });
+                // Fallback: reload page after 2 seconds if refresh doesn't work
+                console.log('Fallback: Will reload page to refresh stock...');
+                setTimeout(function() {
+                    location.reload();
+                }, 2000);
+            }
+        });
+    }
+
     function processSale() {
         if (cart.length === 0) return showError('Cart is empty!');
         let totalText = document.getElementById('totalAmount').innerText.replace('₱', '').replace(/,/g, '');
@@ -686,7 +967,12 @@
             method: 'POST',
             data: { _token: '{{ csrf_token() }}', cart, payment_received: received },
             success: function(data) {
+                console.log('Sale processed successfully:', data);
+                
                 if (data.success) {
+                    // Clear cart immediately after successful sale
+                    cart = [];
+                    
                     document.getElementById('successTrxId').innerText = data.transaction_number;
                     document.getElementById('successTotal').innerText = '₱' + parseFloat(data.total_amount).toLocaleString(undefined, {minimumFractionDigits: 2});
                     document.getElementById('successChange').innerText = '₱' + parseFloat(data.change_returned).toLocaleString(undefined, {minimumFractionDigits: 2});
@@ -694,11 +980,18 @@
                     const saleSuccessModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('saleSuccessModal'));
                     saleSuccessModal.show();
                     setTimeout(normalizeSuccessBackdrop, 20);
+                    
+                    // Refresh product stock to reflect the sale
+                    console.log('Processing sale - refreshing stock');
+                    refreshProductStock();
                 } else {
                     showError(data.error);
                 }
             },
-            error: function() { showError('Transaction failed.'); }
+            error: function(xhr, status, error) { 
+                console.error('Sale processing failed:', error);
+                showError('Transaction failed.'); 
+            }
         });
     }
 </script>
