@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 use App\Models\StockIn;
 use App\Models\StockOut;
@@ -75,7 +76,11 @@ class ProductController extends Controller
             'brand_id' => 'nullable|exists:brands,id',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
-            'code' => 'required|string|unique:products,code',
+            'code' => [
+                'required',
+                'string',
+                Rule::unique('products', 'code')->where(fn ($query) => $query->where('admin_id', $this->getAdminId())),
+            ],
             'image' => 'nullable|image|max:2048', // Max 2MB
             'low_stock_threshold' => 'nullable|integer|min:0',
             'good_stock_threshold' => 'nullable|integer|gt:low_stock_threshold',
@@ -124,7 +129,13 @@ class ProductController extends Controller
             'brand_id' => 'nullable|exists:brands,id',
             'price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:0',
-            'code' => 'required|string|unique:products,code,'.$product->id,
+            'code' => [
+                'required',
+                'string',
+                Rule::unique('products', 'code')
+                    ->where(fn ($query) => $query->where('admin_id', $this->getAdminId()))
+                    ->ignore($product->id),
+            ],
             'image' => 'nullable|image|max:2048',
             'low_stock_threshold' => 'nullable|integer|min:0',
             'good_stock_threshold' => 'nullable|integer|gt:low_stock_threshold',

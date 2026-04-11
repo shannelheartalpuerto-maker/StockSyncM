@@ -158,7 +158,6 @@
                         <hr class="my-4 border-light">
                         
                         <div class="alert alert-light border border-start-0 border-end-0 border-bottom-0 border-top-0 border-primary border-3 bg-light-subtle">
-                            <small class="text-muted"><i class="fa-solid fa-circle-info me-1"></i> Need to change your password? Please contact your system administrator.</small>
                         </div>
                     </div>
                 </div>

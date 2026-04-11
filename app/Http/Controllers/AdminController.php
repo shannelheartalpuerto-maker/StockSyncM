@@ -12,6 +12,21 @@ use Illuminate\Support\Facades\Schema;
 
 class AdminController extends Controller
 {
+    protected function ensureMainAdminForAccountCreation(Request $request)
+    {
+        if (auth()->user()->admin_id === null) {
+            return null;
+        }
+
+        if ($request->ajax()) {
+            return response()->json([
+                'message' => 'Only the main admin can create admin and staff accounts.'
+            ], 403);
+        }
+
+        return redirect()->back()->with('error', 'Only the main admin can create admin and staff accounts.');
+    }
+
     public function index()
     {
         $adminId = $this->getAdminId();
@@ -565,6 +580,11 @@ class AdminController extends Controller
 
     public function storeStaff(Request $request)
     {
+        $authorizationResponse = $this->ensureMainAdminForAccountCreation($request);
+        if ($authorizationResponse) {
+            return $authorizationResponse;
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
@@ -654,6 +674,11 @@ class AdminController extends Controller
 
     public function storeAdmin(Request $request)
     {
+        $authorizationResponse = $this->ensureMainAdminForAccountCreation($request);
+        if ($authorizationResponse) {
+            return $authorizationResponse;
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',

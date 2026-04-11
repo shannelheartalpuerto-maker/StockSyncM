@@ -161,6 +161,7 @@
                 <!-- Add Staff Section -->
                 <div class="col-md-4">
                     <div class="main-form-shell h-100">
+                        @if(auth()->user()->admin_id === null)
                         <h6 class="fw-bold mb-3 text-teal"><i class="fa-solid fa-user-plus me-2"></i>Add New Staff</h6>
                         <form method="POST" action="{{ route('admin.staff.store') }}" id="staffForm">
                             @csrf
@@ -215,6 +216,12 @@
                                 <i class="fa-solid fa-plus me-2"></i>Create Staff Account
                             </button>
                         </form>
+                        @else
+                        <h6 class="fw-bold mb-3 text-teal"><i class="fa-solid fa-user-shield me-2"></i>Account Creation Locked</h6>
+                        <div class="alert alert-info border-0 mb-0">
+                            Only the main admin can create staff accounts.
+                        </div>
+                        @endif
                     </div>
                 </div>
 
