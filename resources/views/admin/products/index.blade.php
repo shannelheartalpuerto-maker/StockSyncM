@@ -597,14 +597,14 @@
                                         <label class="form-label fw-bold">Price</label>
                                         <div class="input-group search-input-group border">
                                             <span class="input-group-text bg-transparent border-0">₱</span>
-                                            <input type="number" step="0.01" class="form-control border-0 bg-transparent" name="price" value="{{ $product->price }}" required>
+                                            <input type="number" step="0.01" min="0" class="form-control border-0 bg-transparent" name="price" value="{{ $product->price }}" required>
                                         </div>
                                     </div>
                                     <div class="col-6">
                                         <label class="form-label fw-bold">Quantity</label>
                                         <div class="input-group search-input-group border">
                                             <span class="input-group-text bg-transparent border-0"><i class="fa-solid fa-cubes text-muted"></i></span>
-                                            <input type="number" class="form-control border-0 bg-transparent" name="quantity" value="{{ $product->quantity }}" required>
+                                            <input type="number" min="0" class="form-control border-0 bg-transparent" name="quantity" value="{{ $product->quantity }}" required>
                                         </div>
                                     </div>
                                 </div>
@@ -725,14 +725,14 @@
                                     <label class="form-label fw-bold">Price <span class="text-danger">*</span></label>
                                     <div class="input-group search-input-group border">
                                         <span class="input-group-text bg-transparent border-0">₱</span>
-                                        <input type="number" step="0.01" class="form-control border-0 bg-transparent" name="price" value="{{ old('price') }}" placeholder="0.00" required>
+                                        <input type="number" step="0.01" min="0" class="form-control border-0 bg-transparent" name="price" value="{{ old('price') }}" placeholder="0.00" required>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <label class="form-label fw-bold">Initial Stock <span class="text-danger">*</span></label>
                                     <div class="input-group search-input-group border">
                                         <span class="input-group-text bg-transparent border-0"><i class="fa-solid fa-cubes text-muted"></i></span>
-                                        <input type="number" class="form-control border-0 bg-transparent" name="quantity" value="{{ old('quantity', 0) }}" placeholder="0" required>
+                                        <input type="number" min="0" class="form-control border-0 bg-transparent" name="quantity" value="{{ old('quantity', 0) }}" placeholder="0" required>
                                     </div>
                                 </div>
                             </div>

@@ -87,6 +87,9 @@ class ProductController extends Controller
             'overstock_threshold' => 'nullable|integer|gt:good_stock_threshold',
         ]);
 
+        $sanitizedPrice = max(0, (float) $request->price);
+        $sanitizedQuantity = max(0, (int) $request->quantity);
+
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('products', 'public');
@@ -97,8 +100,8 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
             'admin_id' => $this->getAdminId(),
-            'price' => $request->price,
-            'quantity' => $request->quantity,
+            'price' => $sanitizedPrice,
+            'quantity' => $sanitizedQuantity,
             'code' => $request->code,
             'description' => $request->description,
             'image' => $imagePath,
@@ -112,7 +115,7 @@ class ProductController extends Controller
             'admin_id' => $this->getAdminId(),
             'user_id' => auth()->id(),
             'product_id' => $product->id,
-            'quantity' => $request->quantity,
+            'quantity' => $sanitizedQuantity,
             'notes' => 'Initial stock'
         ]);
 
@@ -142,8 +145,11 @@ class ProductController extends Controller
             'overstock_threshold' => 'nullable|integer|gt:good_stock_threshold',
         ]);
 
+        $sanitizedPrice = max(0, (float) $request->price);
+        $sanitizedQuantity = max(0, (int) $request->quantity);
+
         // Calculate quantity difference for logging
-        $quantityDiff = $request->quantity - $product->quantity;
+        $quantityDiff = $sanitizedQuantity - $product->quantity;
 
         // Detect threshold changes
         $newLow = $request->low_stock_threshold ?? $product->low_stock_threshold;
@@ -159,8 +165,8 @@ class ProductController extends Controller
             'name' => $request->name,
             'category_id' => $request->category_id,
             'brand_id' => $request->brand_id,
-            'price' => $request->price,
-            'quantity' => $request->quantity,
+            'price' => $sanitizedPrice,
+            'quantity' => $sanitizedQuantity,
             'code' => $request->code,
             'low_stock_threshold' => $newLow,
             'good_stock_threshold' => $newGood,
